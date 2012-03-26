@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Viewports</title>
+    <link rel="stylesheet" type="text/css" href="index.css">
+    <script type="text/javascript" src="lib/prefixfree.min.js"></script>
+  </head>
+  <body data-orientation="portrait" data-panel="1" data-controls="1" data-autoscale="1" data-filter="all" data-no-select="0" data-hold="0">
+    <h1>Viewports</h1>
+
+    <div id="panel">
+      <div id="list">
+        <div class="viewport" data-favourite="1" data-selected="1">
+          <button class="favourite">★</button>
+          <div class="name">HVGA</div>
+          <div class="size">
+            <span class="min">320</span> ⨉ <span class="max">480</span>
+          </div>
+          <div class="details">iPhone...</div>
+          <div class="actions">
+            <button class="landscape">landscape</button>
+            <button class="portrait">portrait</button>
+          </div>
+        </div>
+
+        <div class="viewport" data-favourite="0">
+          <button class="favourite">★</button>
+          <div class="name">SVGA</div>
+          <div class="size">
+            <span class="min">600</span> ⨉ <span class="max">800</span>
+          </div>
+          <div class="details">Low resolution 4/3 desktop monitor</div>
+          <div class="actions">
+            <button class="landscape">landscape</button>
+            <button class="portrait">portrait</button>
+          </div>
+        </div>
+
+        <div class="viewport" data-favourite="1">
+          <button class="favourite">★</button>
+          <div class="name">HVGA</div>
+          <div class="size">
+            <span class="min">768</span> ⨉ <span class="max">1024</span>
+          </div>
+          <div class="details">iPad...</div>
+          <div class="actions">
+            <button class="landscape">landscape</button>
+            <button class="portrait">portrait</button>
+          </div>
+        </div>
+
+        <div class="viewport" data-favourite="0">
+          <button class="favourite">★</button>
+          <div class="name">WXGA</div>
+          <div class="size">
+            <span class="min">800</span> ⨉ <span class="max">1280</span>
+          </div>
+          <div class="details">Asus eeePad transformer</div>
+          <div class="actions">
+            <button class="landscape">landscape</button>
+            <button class="portrait">portrait</button>
+          </div>
+        </div>
+
+        <div class="viewport" data-favourite="0">
+          <button class="favourite">★</button>
+          <div class="name">WUXGA</div>
+          <div class="size">
+            <span class="min">1080</span> ⨉ <span class="max">1920</span>
+          </div>
+          <div class="details">Big ass TV</div>
+          <div class="actions">
+            <button class="landscape">landscape</button>
+            <button class="portrait">portrait</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="filter">
+        <button id="filter-all">all</button>
+        <button id="filter-favourites">favourites</button>
+      </div>
+    </div>
+
+    <div id="playground">
+      <button class="control" id="orientation-landscape" title="rotate viewport to landscape">landscape</button>
+      
+      <button class="control" id="orientation-portrait" title="rotate viewport to portrait">portrait</button>
+      
+      <button class="control" id="panel-switch" title="list of predefined and custom viewports">
+        <span data-status="1">hide</span><span data-status="0">show</span> panel
+      </button>
+      
+      <button class="control" id="controls-switch" title="control buttons and inputs">
+        <span data-status="1">hide</span><span data-status="0">show</span> controls
+      </button>
+      
+      <button class="control" id="autoscale-switch" title="auto scale the viewport fo fit inside the browser window">auto-scale</button>
+
+      <div class="control" id="url">
+        <input type="text" title="url" spellcheck="false" value="http://hsablonniere.github.com/viewports/help">
+      </div>
+
+      <div class="cursor-area" id="scale">
+        <div class="cursor">
+          <div class="handle" title="scale"></div>
+          <input type="text" title="scale" value="10%">
+        </div>
+      </div>
+
+      <div class="cursor-area" id="height">
+        <div class="cursor">
+          <input type="text" title="height" value="120px">
+          <div class="handle" title="height"></div>
+        </div>
+      </div>
+
+      <div class="cursor-area" id="width">
+        <div class="cursor">
+          <input type="text" title="width" value="120px">
+          <div class="handle" title="width"></div>
+        </div>
+      </div>
+
+      <div id="viewport-wrapper">
+        <iframe id="viewport" src="help"></iframe>
+        <div id="chrome"></div>
+      </div>
+    </div>
+
+    <div id="mask"></div>
+
+    <div id="sad-face">
+      <div class="message">
+        ☹<br>
+        your window<br>
+        is too small<br>
+        <span class="min-size">800⨉350</span> minimum
+      </div>
+    </div>
+  </body>
+</html>
