@@ -511,9 +511,14 @@ button.control {
   input {
     border: none;
     border-radius: 0 0 $gutter / 2 $gutter / 2;
+    color: $dark-grey;
     height: 100%;
     padding: 0 $gutter / 2;
     width: 100%;
+  }
+  
+  input:focus {
+    color: $darker-grey;
   }
 }
 
