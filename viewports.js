@@ -542,7 +542,12 @@ var vp = (function(vp) {
 
     var update = function() {
       if (processUpdates) {
-        document.title = vp.memory.width.get() + '⨉' + vp.memory.height.get() + ' ' + vp.memory.url.get() + ' - Viewports';
+        var min = vp.memory.min.get(),
+            max = vp.memory.max.get(),
+            orientation = vp.memory.orientation.get()[0].toUpperCase(),
+            url = vp.memory.url.pattern.exec(vp.memory.url.get())[2];
+
+        document.title = min + '\u2a09' + max + ' (' + orientation + ') ' + url + ' - Viewports';
       }
     };
     
