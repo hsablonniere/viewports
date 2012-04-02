@@ -367,6 +367,10 @@ var vp = (function(vp) {
         suffix: 'px'
       }
     };
+    
+    var setInputValue = function(aInputName, aInput, aValue) {
+      $('#' + aInputName + ' input').value = aValue + aInput.suffix;
+    };
 
     for (var inputName in inputs) {
       (function(inputName, input) {
@@ -374,7 +378,11 @@ var vp = (function(vp) {
           if (input.toFixed) {
             aData = aData.toFixed(input.toFixed);
           }
-          $('#' + inputName + ' input').value = aData + input.suffix;
+          setInputValue(inputName, input, aData);
+        });
+        
+        PubSub.subscribe(inputName + '.parseerror', function(aMsg, aData) {
+          setInputValue(inputName, input, vp.memory[inputName].get());
         });
 
         $('#' + inputName + ' input').addEventListener('change', function(e) {
