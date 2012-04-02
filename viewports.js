@@ -515,6 +515,9 @@ var vp = (function(vp) {
             parsedParams[keyValue[0]] = decodeURIComponent(keyValue[1]);
             vp.memory[shortToLong[keyValue[0]]].set(parsedParams[keyValue[0]]);
           }
+          if (arrayParams.length !== Object.keys(shortToLong).length) {
+            update();
+          }
         }
       }
     };
@@ -531,7 +534,7 @@ var vp = (function(vp) {
         }
 
         newHash = '#' + newHash.join('&');
-        if (newHash !== lastHash) {
+        if (newHash !== location.hash) {
           lastHash = location.hash = newHash;
         }
       }
@@ -550,7 +553,6 @@ var vp = (function(vp) {
   
     addEventListener('load', function() {
       parse(true);
-      update();
     }, false);
   })();
 
