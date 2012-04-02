@@ -205,7 +205,8 @@ var vp = (function(vp) {
   vp.memory = {
     url: extendObject(protos.value, {
       name: 'url',
-      value: 'http://hsablonniere.github.com/viewports'
+      pattern: /^(https?:\/\/(.*?)(?::[0-9]{1,5})?(?:\/.*)?)?$/,
+      value: location.origin + location.pathname + 'help'
     }),
 
     scale: extendObject(protos.numericValue, {
