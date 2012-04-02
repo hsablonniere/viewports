@@ -133,6 +133,7 @@ var vp = (function(vp) {
         aValue = this.converter(groups[1]);
         return aValue;
       } else {
+        PubSub.publish(this.name + '.parseerror', aValue, true);
         return null;
       }
     }
@@ -276,35 +277,40 @@ var vp = (function(vp) {
    * SPECIAL ORIENTATION BEHAVIOURS
    */
 
-  PubSub.subscribe('min.change', function(aMsg, aData) {
-    if (vp.memory.orientation.get() === 'portrait') {
-      PubSub.publish('width.change', aData, true);
-    } else {
-      PubSub.publish('height.change', aData, true);
-    }
-  });
+  (function() {
+    var transformMinMaxToHeightWidth = function(aMsg, aData) {
+      var valueEvent = aMsg.split('.');
+      
+      if (vp.memory.orientation.get() === 'portrait' && valueEvent[0] === 'max'
+        || vp.memory.orientation.get() === 'landscape' && valueEvent[0] === 'min') {
+        valueEvent[0] = 'height';
+      } else {
+        valueEvent[0] = 'width';
+      }
+      
+      PubSub.publish(valueEvent.join('.'), aData, true);
+    };
+    
+    PubSub.subscribe('min.change', transformMinMaxToHeightWidth);
+    PubSub.subscribe('min.parseerror', transformMinMaxToHeightWidth);
+    
+    PubSub.subscribe('max.change', transformMinMaxToHeightWidth);
+    PubSub.subscribe('max.parseerror', transformMinMaxToHeightWidth);
 
-  PubSub.subscribe('max.change', function(aMsg, aData) {
-    if (vp.memory.orientation.get() === 'portrait') {
-      PubSub.publish('height.change', aData, true);
-    } else {
-      PubSub.publish('width.change', aData, true);
-    }
-  });
-
-  PubSub.subscribe('orientation.change', function(aMsg, aData) {
-    if (vp.memory.orientation.get() === 'portrait') {
-      vp.memory.height = vp.memory.max;
-      PubSub.publish('height.change', vp.memory.max.get(), true);
-      vp.memory.width = vp.memory.min;
-      PubSub.publish('width.change', vp.memory.min.get(), true);
-    } else {
-      vp.memory.height = vp.memory.min;
-      PubSub.publish('height.change', vp.memory.min.get(), true);
-      vp.memory.width = vp.memory.max;
-      PubSub.publish('width.change', vp.memory.max.get(), true);
-    }
-  });
+    PubSub.subscribe('orientation.change', function(aMsg, aData) {
+      if (vp.memory.orientation.get() === 'portrait') {
+        vp.memory.height = vp.memory.max;
+        PubSub.publish('height.change', vp.memory.max.get(), true);
+        vp.memory.width = vp.memory.min;
+        PubSub.publish('width.change', vp.memory.min.get(), true);
+      } else {
+        vp.memory.height = vp.memory.min;
+        PubSub.publish('height.change', vp.memory.min.get(), true);
+        vp.memory.width = vp.memory.max;
+        PubSub.publish('width.change', vp.memory.max.get(), true);
+      }
+    });
+  })();
 
 
 
@@ -479,8 +485,8 @@ var vp = (function(vp) {
     var parse = function(force) {
       if (lastHash !== location.hash || force === true) {
         var arrayParams = location.hash.slice(1).split('&'),
-            keyValue,
-            parsedParams = {};
+        keyValue,
+        parsedParams = {};
 
         if (pattern.test(location.hash)) {
           for (var i = 0; i < arrayParams.length; i += 1) {
@@ -543,9 +549,9 @@ var vp = (function(vp) {
     var update = function() {
       if (processUpdates) {
         var min = vp.memory.min.get(),
-            max = vp.memory.max.get(),
-            orientation = vp.memory.orientation.get()[0].toUpperCase(),
-            url = vp.memory.url.pattern.exec(vp.memory.url.get())[2];
+        max = vp.memory.max.get(),
+        orientation = vp.memory.orientation.get()[0].toUpperCase(),
+        url = vp.memory.url.pattern.exec(vp.memory.url.get())[2];
 
         document.title = min + '\u2a09' + max + ' (' + orientation + ') ' + url + ' - Viewports';
       }
@@ -717,10 +723,10 @@ var vp = (function(vp) {
     var scale = function(e) {
       if (!!+vp.memory.autoscale.get()) {
         var clientH = $('#viewport-wrapper').clientHeight,
-            clientW = $('#viewport-wrapper').clientWidth,
-            height = vp.memory.height.get(),
-            width = vp.memory.width.get(),
-            newScale = vp.memory.scale.get();
+        clientW = $('#viewport-wrapper').clientWidth,
+        height = vp.memory.height.get(),
+        width = vp.memory.width.get(),
+        newScale = vp.memory.scale.get();
 
         if (height > clientH || width > clientW) {
           if ((height - clientH) / height > (width - clientW) / width) {
