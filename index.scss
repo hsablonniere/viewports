@@ -53,14 +53,14 @@ $panel-bg-color: #E5E5E5;
   background-size: 6px 6px;
 }
 @mixin button {
-  background-color: #EFEFEF;
-  background-image: linear-gradient(#FFF, #E0E0E0);
+  background-color: #EEE;
+  background-image: linear-gradient(#FFF, #DDD);
   color: $dark-grey;
   text-shadow: 0 1px 0 #FFF;
 
   &:hover {
-    background-color: #EFEFEF;
-    background-image: linear-gradient(#E0E0E0, #FFF);
+    background-color: #EEE;
+    background-image: linear-gradient(#DDD, #FFF);
   }
 }
 @mixin button-toggled {
@@ -538,7 +538,7 @@ button.control {
   width: $cursor-width;
   
   &:before {
-    color: #EFEFEF;
+    color: #EEE;
     margin: $cursor-gutter / 2;
     position: absolute;
     line-height: $control-height;
