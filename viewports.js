@@ -110,7 +110,7 @@ var vp = (function(vp) {
    */
   protos.value = {
     name: "unknown",
-    value: "",
+    defaultValue: "",
     pattern: /^(.*)$/,
     converter: String,
 
@@ -119,6 +119,12 @@ var vp = (function(vp) {
       if (aValue!== null && aValue !== this.value) {
         this.value = aValue;
         PubSub.publish(this.name + '.change', aValue, true);
+      }
+    },
+
+    init: function() {
+      if (this.value === undefined) {
+        this.set(this.defaultValue);
       }
     },
 
@@ -143,7 +149,7 @@ var vp = (function(vp) {
    * prototype to save and safely manipulate a number value using min and max
    */
   protos.numericValue = extendObject(protos.value, {
-    value: 0,
+    defaultValue: 0,
     pattern: /^([0-9]+)$/,
     converter: Number,
     min: -Infinity,
@@ -170,6 +176,7 @@ var vp = (function(vp) {
    */
   protos.dualValue = extendObject(protos.value, {
     pattern: null,
+    defaultValue: '0',
     a: '0',
     b: '1',
     
@@ -207,12 +214,12 @@ var vp = (function(vp) {
     url: extendObject(protos.value, {
       name: 'url',
       pattern: /^(https?:\/\/(.*?)(?::[0-9]{1,5})?(?:\/.*)?)?$/,
-      value: location.origin + location.pathname + 'help'
+      defaultValue: location.origin + location.pathname + 'help'
     }),
 
     scale: extendObject(protos.numericValue, {
       name: 'scale',
-      value: 100,
+      defaultValue: 100,
       pattern: /^(([0-9]{1,3})(.([0-9]))?)%?$/,
       converter: toFixed1,
       min: 10,
@@ -221,52 +228,58 @@ var vp = (function(vp) {
 
     min: extendObject(protos.dimensionValue, {
       name: 'min',
-      value: 320
+      defaultValue: 320
     }),
 
     max: extendObject(protos.dimensionValue, {
       name: 'max',
-      value: 480
+      defaultValue: 480
     }),
 
     orientation: extendObject(protos.dualValue, {
       name: 'orientation',
-      value: 'portrait',
+      defaultValue: 'portrait',
       a: 'portrait',
       b: 'landscape'
     }),
 
     panel: extendObject(protos.dualValue, {
       name: 'panel',
-      value: '1'
+      defaultValue: '1'
     }),
 
     controls: extendObject(protos.dualValue, {
       name: 'controls',
-      value: '1'
+      defaultValue: '1'
     }),
 
     autoscale: extendObject(protos.dualValue, {
       name: 'autoscale',
-      value: '1'
+      defaultValue: '1'
     }),
 
     filter: extendObject(protos.dualValue, {
       name: 'filter',
-      value: 'all',
+      defaultValue: 'all',
       a: 'all',
       b: 'favourites'
     }),
 
     hold: extendObject(protos.dualValue, {
       name: 'hold',
-      value: '0'
+      defaultValue: '0'
     })
   };
   
   addEventListener('load', function() {
     vp.memory.height = vp.memory.max;
     vp.memory.width = vp.memory.min;
+  }, false);
+  
+  addEventListener('load', function() {
+    for (var value in vp.memory) {
+      vp.memory[value].init();
+    }
   }, false);
 
 
