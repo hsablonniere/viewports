@@ -542,6 +542,7 @@ var vp = (function(vp) {
     
     for (var shortName in shortToLong) {
       PubSub.subscribe(shortToLong[shortName] + '.change', update);
+      PubSub.subscribe(shortToLong[shortName] + '.parseerror', update);
     }
     
     PubSub.subscribe('hold.change', function(aMsg, aData) {
