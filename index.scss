@@ -541,7 +541,8 @@ button.control {
   width: $cursor-width;
   
   &:before {
-    color: #EEE;
+    color: #EFEFEF;
+    text-shadow: none;
     margin: $cursor-gutter / 2;
     position: absolute;
     line-height: $control-height;
@@ -659,6 +660,7 @@ button.control {
     &:before {
       bottom: 0;
       content: '\25B2';
+      color: #DDD;
       left: $cursor-gutter / 2;
       line-height: $control-height / 2;
       margin-bottom: 0;
