@@ -165,25 +165,6 @@ button {
 
 
 
-/* Scrollbars (webkit specific eyecandy) -------------------------------------------------------- */
-
-/* Let's get this party started */
-::-webkit-scrollbar {
-  width: $gutter / 2;
-}
-
-::-webkit-scrollbar-track {
-  border-radius: $gutter;
-}
-
-::-webkit-scrollbar-thumb {
-  border-radius: $gutter;
-  background: $light-grey;
-}
-
-
-
-
 
 /* Viewports list ------------------------------------------------------------------------------- */
 
@@ -204,6 +185,19 @@ button {
   position: absolute;
   right: 0;
   top: $font-size * 2 + $gutter;
+  
+  &::-webkit-scrollbar {
+    width: $gutter / 2;
+}
+
+  &::-webkit-scrollbar-track {
+    border-radius: $gutter;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: $gutter;
+    background: $light-grey;
+  }
 }
 
 .viewport {
