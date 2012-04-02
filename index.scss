@@ -52,11 +52,14 @@ $panel-bg-color: #E5E5E5;
   background-position: 0 1px, 0 2px;
   background-size: 6px 6px;
 }
-@mixin button {
+@mixin simple-button {
   background-color: #EEE;
   background-image: linear-gradient(#FFF, #DDD);
   color: $dark-grey;
   text-shadow: 0 1px 0 #FFF;
+}
+@mixin button {
+  @include simple-button;
 
   &:hover {
     background-color: #EEE;
@@ -529,7 +532,7 @@ button.control {
 }
 
 .cursor {
-  @include button;
+  @include simple-button;
   bottom: 0;
   box-shadow: $box-shadow;
   height: $cursor-height;
