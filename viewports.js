@@ -350,7 +350,7 @@ var vp = (function(vp) {
     
     var selectViewport = function(aMsg, aData) {
       var min = vp.memory.min.get(),
-          max = vp.memory.max.get();
+      max = vp.memory.max.get();
 
       var currentSelection = $('.viewport[data-selected="1"]', true);
       if (currentSelection !== null) {
@@ -739,7 +739,11 @@ var vp = (function(vp) {
     }, false);
     
     addEventListener('keyup', function(e) {
-      vp.memory.hold.set('0');
+      var keyCombination = keyNames(e);
+      
+      if (listeners[keyCombination]) {
+        vp.memory.hold.set('0');
+      }
     }, false);
   })();
 
