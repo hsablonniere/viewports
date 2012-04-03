@@ -500,22 +500,9 @@ button.control {
   }
 }
 
-#autoscale-switch {
-  left: $split + $gutter * 3 + $button-width-panel + $button-width-controls;
-  width: $button-width-scale;
-  
-  [data-controls="0"] & {
-    top: 0 - $control-height - $gutter;
-  }
-
-  [data-autoscale="1"] & {
-    @include button-toggled;
-  }
-}
-
 #url {
-  left: $split + $gutter * 4 + $button-width-panel + $button-width-controls + $button-width-scale;
-  right: $gutter * 2 + $button-width-help;
+  left: $split + $gutter * 3 + $button-width-panel + $button-width-controls;
+  right: $gutter * 3 + $button-width-help + $button-width-scale;
   
   [data-controls="0"] & {
     top: 0 - $control-height - $gutter;
@@ -532,6 +519,19 @@ button.control {
   
   input:focus {
     color: $darker-grey;
+  }
+}
+
+#autoscale-switch {
+  right: $gutter * 2 + $button-width-help;
+  width: $button-width-scale;
+  
+  [data-controls="0"] & {
+    top: 0 - $control-height - $gutter;
+  }
+
+  [data-autoscale="1"] & {
+    @include button-toggled;
   }
 }
 
