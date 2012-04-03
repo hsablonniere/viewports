@@ -172,7 +172,8 @@ button {
 /* Viewports list ------------------------------------------------------------------------------- */
 
 #panel {
-  background: $panel-bg-color;
+  /* http://subtlepatterns.com/?p=1064 */
+  background: url(chruch.png);
   left: 0;
   width: $split;
 }
