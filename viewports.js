@@ -260,7 +260,7 @@ var vp = (function(vp) {
 
     filter: extendObject(protos.dualValue, {
       name: 'filter',
-      defaultValue: 'all',
+      defaultValue: 'favourites',
       a: 'all',
       b: 'favourites'
     }),

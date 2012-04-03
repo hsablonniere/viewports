@@ -1,3 +1,5 @@
+@import "compass/utilities/general/clearfix";
+
 $font-size: 14px;
 $split: 300px;
 $gutter: 10px;
@@ -205,6 +207,7 @@ button {
 }
 
 .viewport {
+  @include clearfix;
   padding: $gutter / 1.5 0;
   position: relative;
   transition: none;
@@ -247,6 +250,7 @@ button {
   
   .name,
   .size {
+    float: left;
     padding: 1px 0;
   }
   
@@ -267,12 +271,15 @@ button {
   }
 
   .size {
+    clear: left;
     color: $darker-grey;
     font-weight: normal;
   }
 
   .details {
+    clear: left;
     color: $dark-grey;
+    float: left;
     font-weight: normal;
     margin-top: $gutter;
   }
