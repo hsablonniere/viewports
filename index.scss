@@ -508,6 +508,10 @@ button.control {
     top: 0 - $control-height - $gutter;
   }
   
+  &.focused {
+    right: $gutter;
+  }
+  
   input {
     border: none;
     border-radius: 0 0 $gutter / 2 $gutter / 2;
@@ -864,6 +868,10 @@ screen and (max-width: 799px) {
 
 h1 {
   z-index: 60;
+}
+
+#url {
+  z-index: 51;
 }
 
 .control, .cursor {

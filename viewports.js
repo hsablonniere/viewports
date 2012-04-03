@@ -435,6 +435,7 @@ var vp = (function(vp) {
             aData = aData.toFixed(input.toFixed);
           }
           setInputValue(inputName, input, aData);
+          $('#' + inputName + ' input').blur();
         });
         
         PubSub.subscribe(inputName + '.parseerror', function(aMsg, aData) {
@@ -443,6 +444,14 @@ var vp = (function(vp) {
 
         $('#' + inputName + ' input').addEventListener('change', function(e) {
           vp.memory[inputName].set(e.target.value);
+        }, false);
+
+        $('#' + inputName + ' input').addEventListener('focus', function(e) {
+          $('#' + inputName).classList.add('focused');
+        }, false);
+
+        $('#' + inputName + ' input').addEventListener('blur', function(e) {
+          $('#' + inputName).classList.remove('focused');
         }, false);
       })(inputName, inputs[inputName]);
     }
