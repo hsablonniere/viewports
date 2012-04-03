@@ -13,6 +13,7 @@ $button-width: 110px;
 $button-width-panel: 90px;
 $button-width-controls: 110px;
 $button-width-scale: 90px;
+$button-width-help: 50px;
 $button-width-orientation-landscape: 90px;
 $button-width-orientation-portrait: 70px;
 
@@ -381,11 +382,15 @@ button {
   top: 0;
 }
 
+a.control,
 button.control {
   @include button;
   color: $dark-grey;
   cursor: pointer;
+  line-height: $control-height;
   padding: 0;
+  text-align: center;
+  text-decoration: none;
   text-shadow: 0 1px 0 #FFF;
   width: $button-width;
   
@@ -510,7 +515,7 @@ button.control {
 
 #url {
   left: $split + $gutter * 4 + $button-width-panel + $button-width-controls + $button-width-scale;
-  right: $gutter;
+  right: $gutter * 2 + $button-width-help;
   
   [data-controls="0"] & {
     top: 0 - $control-height - $gutter;
@@ -527,6 +532,15 @@ button.control {
   
   input:focus {
     color: $darker-grey;
+  }
+}
+
+#help-link {
+  right: $gutter;
+  width: $button-width-help;
+  
+  [data-controls="0"] & {
+    top: 0 - $control-height - $gutter;
   }
 }
 
