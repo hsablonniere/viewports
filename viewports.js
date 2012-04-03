@@ -330,6 +330,20 @@ var vp = (function(vp) {
 
 
   /**
+   * LIST
+   */
+
+  (function() {
+    addEventListener('load', function() {
+      $('#list').innerHTML = ich.listTemplate(vp.list);
+    }, false);
+  })();
+
+
+
+
+
+  /**
    * VIEWPORT
    */
   

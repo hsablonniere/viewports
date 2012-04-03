@@ -10,72 +10,7 @@
     <h1>Viewports</h1>
 
     <div id="panel">
-      <div id="list">
-        <div class="viewport" data-favourite="1" data-selected="1">
-          <button class="favourite">★</button>
-          <div class="name">HVGA</div>
-          <div class="size">
-            <span class="min">320</span> ⨉ <span class="max">480</span>
-          </div>
-          <div class="details">iPhone...</div>
-          <div class="actions">
-            <button class="landscape">landscape</button>
-            <button class="portrait">portrait</button>
-          </div>
-        </div>
-
-        <div class="viewport" data-favourite="0">
-          <button class="favourite">★</button>
-          <div class="name">SVGA</div>
-          <div class="size">
-            <span class="min">600</span> ⨉ <span class="max">800</span>
-          </div>
-          <div class="details">Low resolution 4/3 desktop monitor</div>
-          <div class="actions">
-            <button class="landscape">landscape</button>
-            <button class="portrait">portrait</button>
-          </div>
-        </div>
-
-        <div class="viewport" data-favourite="1">
-          <button class="favourite">★</button>
-          <div class="name">HVGA</div>
-          <div class="size">
-            <span class="min">768</span> ⨉ <span class="max">1024</span>
-          </div>
-          <div class="details">iPad...</div>
-          <div class="actions">
-            <button class="landscape">landscape</button>
-            <button class="portrait">portrait</button>
-          </div>
-        </div>
-
-        <div class="viewport" data-favourite="0">
-          <button class="favourite">★</button>
-          <div class="name">WXGA</div>
-          <div class="size">
-            <span class="min">800</span> ⨉ <span class="max">1280</span>
-          </div>
-          <div class="details">Asus eeePad transformer</div>
-          <div class="actions">
-            <button class="landscape">landscape</button>
-            <button class="portrait">portrait</button>
-          </div>
-        </div>
-
-        <div class="viewport" data-favourite="0">
-          <button class="favourite">★</button>
-          <div class="name">WUXGA</div>
-          <div class="size">
-            <span class="min">1080</span> ⨉ <span class="max">1920</span>
-          </div>
-          <div class="details">Big ass TV</div>
-          <div class="actions">
-            <button class="landscape">landscape</button>
-            <button class="portrait">portrait</button>
-          </div>
-        </div>
-      </div>
+      <div id="list"></div>
 
       <div id="filter">
         <button id="filter-all">all</button>
@@ -141,6 +76,26 @@
     </div>
     
     <script type="text/javascript" src="lib/PubSubJS.min.js"></script>
+    <script type="text/javascript" src="lib/ICanHaz.min.js"></script>
+    
+    <script id="listTemplate" type="text/html">
+      {{#items}}
+      <div class="viewport" data-favourite="{{favourite}}" data-size-min="{{size.min}}" data-size-max="{{size.max}}">
+        <button class="favourite">★</button>
+        <div class="name">{{name}}</div>
+        <div class="size">
+          <span class="min">{{size.min}}</span> ⨉ <span class="max">{{size.max}}</span>
+        </div>
+        <div class="details">{{details}}</div>
+        <div class="actions">
+          <button class="orientation" data-size-min="{{size.min}}" data-size-max="{{size.max}}" data-orientation="landscape">landscape</button>
+          <button class="orientation" data-size-min="{{size.min}}" data-size-max="{{size.max}}" data-orientation="portrait">portrait</button>
+        </div>
+      </div>
+      {{/items}}
+    </script>
+    
     <script type="text/javascript" src="viewports.js"></script>
+    <script type="text/javascript" src="viewports-list.js"></script>
   </body>
 </html>

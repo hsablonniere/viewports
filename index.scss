@@ -282,16 +282,16 @@ button {
     top: $gutter / 1.5;
   }
 
-  .landscape,
-  .portrait {
+  [data-orientation="landscape"],
+  [data-orientation="portrait"] {
     display: block;
     margin: 3px 0;
     width: $button-width-orientation-landscape;
   }
 }
 
-[data-orientation="portrait"] .viewport[data-selected="1"] .orientation-portrait,
-[data-orientation="landscape"] .viewport[data-selected="1"] .orientation-landscape {
+[data-orientation="portrait"] .viewport[data-selected="1"] [data-orientation="portrait"],
+[data-orientation="landscape"] .viewport[data-selected="1"] [data-orientation="landscape"] {
   @include button-toggled;
 }
 
