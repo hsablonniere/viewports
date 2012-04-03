@@ -337,6 +337,35 @@ var vp = (function(vp) {
     addEventListener('load', function() {
       $('#list').innerHTML = ich.listTemplate(vp.list);
     }, false);
+    
+    $('#list').addEventListener('click', function(e) {
+      if (e.target.classList.contains('orientation')) {
+        vp.memory.min.set(e.target.dataset.sizeMin);
+        vp.memory.max.set(e.target.dataset.sizeMax);
+        vp.memory.orientation.set(e.target.dataset.orientation);
+      }
+    }, false);
+    
+    var values = ['min', 'max', 'width', 'height'];
+    
+    var selectViewport = function(aMsg, aData) {
+      var min = vp.memory.min.get(),
+          max = vp.memory.max.get();
+
+      var currentSelection = $('.viewport[data-selected="1"]', true);
+      if (currentSelection !== null) {
+        currentSelection.dataset.selected = '0';
+      }
+      
+      var newSelection = $('.viewport[data-size-min="' + min + '"][data-size-max="' + max + '"]');
+      if (newSelection !== null) {
+        newSelection.dataset.selected = '1';
+      }
+    };
+    
+    for (var i = 0; i < values.length; i++) {
+      PubSub.subscribe(values[i] + '.change', selectViewport);
+    }
   })();
 
 
