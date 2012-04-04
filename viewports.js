@@ -1,44 +1,58 @@
-var vp = (function(vp) {
+/*jshint forin:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, strict:true, undef:true, curly:true, browser:true, es5:true, indent:2, trailing:true */
+/*global PubSub:false, PrefixFree:false, ich:false */
+
+var vp = (function ($win, $doc, $ps, $pf, $ich) {
   'use strict';
+
+  var extendObject,
+      dom,
+      keyNames,
+      toFixed1,
+      protos,
+      vp;
 
   /**
    * HELPERS
    */
 
   /**
-   * Helper to extend object using Object.create but without having to specify 
+   * Helper to extend object using Object.create but without having to specify
    * all the properties like value, writable, enumerable, configurable...
    */
-  var extendObject = function(aProto, aExtensionObject) {
-    var newObject = Object.create(aProto);
-    for(var key in aExtensionObject) {
-      if(aExtensionObject.hasOwnProperty(key)) {
-        newObject[key] = aExtensionObject[key];
+  extendObject = function (aProto, aExtensionObject) {
+    var newObject = Object.create(aProto),
+        property;
+
+    for (property in aExtensionObject) {
+      if (aExtensionObject.hasOwnProperty(property)) {
+        newObject[property] = aExtensionObject[property];
       }
     }
+
     return newObject;
   };
 
   /**
    * Helper for DOM with 'cache' using CSS selector
-   * document.querySelector('div') => $('div')
+   * document.querySelector('div') => dom('div')
    */
-  var $ = (function() {
+  dom = (function () {
     var cache = {};
-    
-    return function(aQuery, force) {
-      if (!(aQuery in cache) || force === true) {
-        cache[aQuery] = document.querySelector(aQuery);
+
+    return function (aQuery, aForce) {
+      if (!cache.hasOwnProperty(aQuery) || aForce === true) {
+        cache[aQuery] = $doc.querySelector(aQuery);
       }
+
       return cache[aQuery];
-    }
+    };
   })();
 
   /**
    * Helper to translate keyCode into a human readable keyName
    */
-  var keyNames = (function() {
-    var specials = {
+  keyNames = (function () {
+    var specialKeyCodes = {
       '38': 'up',
       '40': 'down',
       '39': 'right',
@@ -46,34 +60,38 @@ var vp = (function(vp) {
       '33': 'pageup',
       '34': 'pagedown'
     };
-  
-    return function(e) {
+
+    return function (aEvent) {
       var key = null;
-      
-      if (e.keyCode in specials) {
-        key = specials[e.keyCode];
+
+      if (specialKeyCodes.hasOwnProperty(aEvent.keyCode)) {
+        key = specialKeyCodes[aEvent.keyCode];
       } else {
-        key = String.fromCharCode(e.keyCode);
+        key = String.fromCharCode(aEvent.keyCode);
       }
-      
-      key += e.shiftKey ? '+shift' : '';
-      
+
+      key += aEvent.shiftKey ? '+shift' : '';
+
       return key;
-    }
+    };
   })();
 
   /**
    * Helper to format a number to only one digit after decimal point
    */
-  var toFixed1 = function(aValue) {
+  toFixed1 = function (aValue) {
     return Number(Number(aValue).toFixed(1));
   };
 
   /**
    * Shim for transition events
    */
-  (function() {
-    var events = {
+  (function () {
+    var prefixedEvents,
+        triggerTransitionEnd,
+        prefixedEvent;
+
+    prefixedEvents = {
       'webkitTransitionEnd': {
         proto: 'WebKitTransitionEvent',
         init: 'initWebKitTransitionEvent'
@@ -82,16 +100,21 @@ var vp = (function(vp) {
         proto: 'OTransitionEvent',
         init: 'initTransitionEvent'
       }
-    }
-    
-    var triggerTransitionEnd = function(e) {
-      var evt = document.createEvent(events[e.type].proto);
-      evt[events[e.type].init]('transitionend', true, true, e.propertyName, e.elapsedTime);
-      dispatchEvent(evt);
     };
-    
-    for (var event in events) {
-      addEventListener(event, triggerTransitionEnd, false);
+
+    triggerTransitionEnd = function (aEvent) {
+      var proto = prefixedEvents[aEvent.type].proto,
+          initFunction = prefixedEvents[aEvent.type].init,
+          evt = $doc.createEvent(proto);
+
+      evt[initFunction]('transitionend', true, true, aEvent.propertyName, aEvent.elapsedTime);
+      $win.dispatchEvent(evt);
+    };
+
+    for (prefixedEvent in prefixedEvents) {
+      if (prefixedEvents.hasOwnProperty(prefixedEvent)) {
+        $win.addEventListener(prefixedEvent, triggerTransitionEnd, false);
+      }
     }
   })();
 
@@ -103,22 +126,23 @@ var vp = (function(vp) {
    * CORE PROTOTYPES
    */
 
-  var protos = {};
+  protos = {};
 
   /**
    * prototype to save and safely manipulate a string value using a pattern
    */
   protos.value = {
-    name: "unknown",
-    defaultValue: "",
+    name: 'unknown',
+    defaultValue: '',
     pattern: /^(.*)$/,
     converter: String,
 
     set value (aValue) {
       aValue = this.parse(aValue);
-      if (aValue!== null && aValue !== this._value) {
+
+      if (aValue !== null && aValue !== this._value) {
         this._value = aValue;
-        PubSub.publish(this.name + '.change', aValue, true);
+        $ps.publish(this.name + '.change', aValue, true);
       }
     },
 
@@ -126,20 +150,20 @@ var vp = (function(vp) {
       return this._value;
     },
 
-    init: function() {
+    init: function () {
       if (this.value === undefined) {
         this.value = this.defaultValue;
       }
     },
 
-    parse: function(aValue) {
+    parse: function (aValue) {
       var groups = this.pattern.exec(aValue);
-      
-      if (groups && groups[1]) {
+
+      if (groups !== null && groups[1] !== undefined) {
         aValue = this.converter(groups[1]);
         return aValue;
       } else {
-        PubSub.publish(this.name + '.parseerror', aValue, true);
+        $ps.publish(this.name + '.parseerror', aValue, true);
         return null;
       }
     }
@@ -155,17 +179,17 @@ var vp = (function(vp) {
     min: -Infinity,
     max: +Infinity,
 
-    parse: function(aValue) {
+    parse: function (aValue) {
       aValue = protos.value.parse.call(this, aValue);
-    
-      if (!isNaN(aValue) && aValue >= this.min && aValue <= this.max) {
+
+      if (!isNaN(aValue) && this.min <= aValue && aValue <= this.max) {
         return aValue;
       } else {
         return null;
       }
     },
 
-    alter: function(aMount) {
+    alter: function (aMount) {
       this.value += aMount;
     }
   });
@@ -179,16 +203,17 @@ var vp = (function(vp) {
     defaultValue: '0',
     a: '0',
     b: '1',
-    
-    parse: function(aValue) {
-      if (!this.pattern) {
+
+    parse: function (aValue) {
+      if (this.pattern === null) {
         this.pattern = new RegExp('^(' + this.a + '|' + this.b + ')$');
       }
+
       return protos.value.parse.call(this, aValue);
     },
 
-    toggle: function() {
-      this.value = this.value === this.a ? this.b : this.a;
+    toggle: function () {
+      this.value = (this.value === this.a) ? this.b : this.a;
     }
   });
 
@@ -207,6 +232,16 @@ var vp = (function(vp) {
 
 
   /**
+   * CORE
+   */
+
+  vp = {};
+
+
+
+
+
+  /**
    * MEMORY
    */
 
@@ -214,7 +249,7 @@ var vp = (function(vp) {
     url: extendObject(protos.value, {
       name: 'url',
       pattern: /^(https?:\/\/(.*?)(?::[0-9]{1,5})?(?:\/.*)?)?$/,
-      defaultValue: location.origin + location.pathname + 'help'
+      defaultValue: $win.location.origin + $win.location.pathname + 'help'
     }),
 
     scale: extendObject(protos.numericValue, {
@@ -270,15 +305,19 @@ var vp = (function(vp) {
       defaultValue: '0'
     })
   };
-  
-  addEventListener('load', function() {
+
+  $win.addEventListener('load', function (aEvent) {
     vp.memory.height = vp.memory.max;
     vp.memory.width = vp.memory.min;
   }, false);
-  
-  addEventListener('load', function() {
-    for (var value in vp.memory) {
-      vp.memory[value].init();
+
+  $win.addEventListener('load', function (aEvent) {
+    var value;
+
+    for (value in vp.memory) {
+      if (vp.memory.hasOwnProperty(value)) {
+        vp.memory[value].init();
+      }
     }
   }, false);
 
@@ -290,37 +329,37 @@ var vp = (function(vp) {
    * SPECIAL ORIENTATION BEHAVIOURS
    */
 
-  (function() {
-    var transformMinMaxToHeightWidth = function(aMsg, aData) {
+  (function () {
+    var publishMinMaxToHeightWidth = function (aMsg, aData) {
       var valueEvent = aMsg.split('.');
-      
-      if (vp.memory.orientation.value === 'portrait' && valueEvent[0] === 'max'
-        || vp.memory.orientation.value === 'landscape' && valueEvent[0] === 'min') {
+
+      if (vp.memory.orientation.value === 'portrait' && valueEvent[0] === 'max' ||
+          vp.memory.orientation.value === 'landscape' && valueEvent[0] === 'min') {
         valueEvent[0] = 'height';
       } else {
         valueEvent[0] = 'width';
       }
-      
-      PubSub.publish(valueEvent.join('.'), aData, true);
-    };
-    
-    PubSub.subscribe('min.change', transformMinMaxToHeightWidth);
-    PubSub.subscribe('min.parseerror', transformMinMaxToHeightWidth);
-    
-    PubSub.subscribe('max.change', transformMinMaxToHeightWidth);
-    PubSub.subscribe('max.parseerror', transformMinMaxToHeightWidth);
 
-    PubSub.subscribe('orientation.change', function(aMsg, aData) {
+      $ps.publish(valueEvent.join('.'), aData, true);
+    };
+
+    $ps.subscribe('min.change', publishMinMaxToHeightWidth);
+    $ps.subscribe('min.parseerror', publishMinMaxToHeightWidth);
+
+    $ps.subscribe('max.change', publishMinMaxToHeightWidth);
+    $ps.subscribe('max.parseerror', publishMinMaxToHeightWidth);
+
+    $ps.subscribe('orientation.change', function (aMsg, aData) {
       if (vp.memory.orientation.value === 'portrait') {
         vp.memory.height = vp.memory.max;
-        PubSub.publish('height.change', vp.memory.max.value, true);
+        $ps.publish('height.change', vp.memory.max.value, true);
         vp.memory.width = vp.memory.min;
-        PubSub.publish('width.change', vp.memory.min.value, true);
+        $ps.publish('width.change', vp.memory.min.value, true);
       } else {
         vp.memory.height = vp.memory.min;
-        PubSub.publish('height.change', vp.memory.min.value, true);
+        $ps.publish('height.change', vp.memory.min.value, true);
         vp.memory.width = vp.memory.max;
-        PubSub.publish('width.change', vp.memory.max.value, true);
+        $ps.publish('width.change', vp.memory.max.value, true);
       }
     });
   })();
@@ -333,38 +372,42 @@ var vp = (function(vp) {
    * LIST
    */
 
-  (function() {
-    addEventListener('load', function() {
-      $('#list').innerHTML = ich.listTemplate(vp.list);
+  (function () {
+    var values = ['min', 'max', 'width', 'height'],
+        selectViewport,
+        i;
+
+    $win.addEventListener('load', function (aEvent) {
+      dom('#list').innerHTML = $ich.listTemplate(vp.list);
     }, false);
-    
-    $('#list').addEventListener('click', function(e) {
-      if (e.target.classList.contains('orientation')) {
-        vp.memory.min.value = e.target.dataset.sizeMin;
-        vp.memory.max.value = e.target.dataset.sizeMax;
-        vp.memory.orientation.value = e.target.dataset.orientation;
+
+    dom('#list').addEventListener('click', function (aEvent) {
+      if (aEvent.target.classList.contains('orientation')) {
+        vp.memory.min.value = aEvent.target.dataset.sizeMin;
+        vp.memory.max.value = aEvent.target.dataset.sizeMax;
+        vp.memory.orientation.value = aEvent.target.dataset.orientation;
       }
     }, false);
-    
-    var values = ['min', 'max', 'width', 'height'];
-    
-    var selectViewport = function(aMsg, aData) {
-      var min = vp.memory.min.value,
-      max = vp.memory.max.value;
 
-      var currentSelection = $('.viewport[data-selected="1"]', true);
+    selectViewport = function (aMsg, aData) {
+      var min = vp.memory.min.value,
+          max = vp.memory.max.value,
+          currentSelection,
+          newSelection;
+
+      currentSelection = dom('.viewport[data-selected="1"]', true);
       if (currentSelection !== null) {
         currentSelection.dataset.selected = '0';
       }
-      
-      var newSelection = $('.viewport[data-size-min="' + min + '"][data-size-max="' + max + '"]');
+
+      newSelection = dom('.viewport[data-size-min="' + min + '"][data-size-max="' + max + '"]');
       if (newSelection !== null) {
         newSelection.dataset.selected = '1';
       }
     };
-    
-    for (var i = 0; i < values.length; i++) {
-      PubSub.subscribe(values[i] + '.change', selectViewport);
+
+    for (i = 0; i < values.length; i++) {
+      $ps.subscribe(values[i] + '.change', selectViewport);
     }
   })();
 
@@ -375,27 +418,27 @@ var vp = (function(vp) {
   /**
    * VIEWPORT
    */
-  
-  (function() {
-    PubSub.subscribe('url.change', function(aMsg, aData) {
-      $('#viewport').src = aData;
+
+  (function () {
+    $ps.subscribe('url.change', function (aMsg, aData) {
+      dom('#viewport').src = aData;
     });
 
-    PubSub.subscribe('scale.change', function(aMsg, aData) {
+    $ps.subscribe('scale.change', function (aMsg, aData) {
       aData = (aData / 100).toFixed(3);
-      $('#viewport-wrapper').style.setProperty(PrefixFree.prefix + 'transform', 'scale(' + aData + ')', '');
+      dom('#viewport-wrapper').style.setProperty($pf.prefix + 'transform', 'scale(' + aData + ')', '');
     });
 
-    PubSub.subscribe('height.change', function(aMsg, aData) {
-      $('#viewport').style.setProperty('height', aData + 'px', '');
+    $ps.subscribe('height.change', function (aMsg, aData) {
+      dom('#viewport').style.setProperty('height', aData + 'px', '');
       aData = Math.round(aData / 2);
-      $('#viewport').style.setProperty('margin-top', '-' + aData + 'px', '');
+      dom('#viewport').style.setProperty('margin-top', '-' + aData + 'px', '');
     });
 
-    PubSub.subscribe('width.change', function(aMsg, aData) {
-      $('#viewport').style.setProperty('width', aData + 'px', '');
+    $ps.subscribe('width.change', function (aMsg, aData) {
+      dom('#viewport').style.setProperty('width', aData + 'px', '');
       aData = Math.round(aData / 2);
-      $('#viewport').style.setProperty('margin-left', '-' + aData + 'px', '');
+      dom('#viewport').style.setProperty('margin-left', '-' + aData + 'px', '');
     });
   })();
 
@@ -406,54 +449,67 @@ var vp = (function(vp) {
   /**
    * INPUTS
    */
-  
-  (function() {
-    var inputs = {
+
+  (function () {
+    var inputs,
+        setInputValue,
+        addSubscribers,
+        addDomListeners,
+        inputName;
+
+    inputs = {
       url: {
         suffix: ''
-      }, 
+      },
       scale: {
         suffix: '%',
         toFixed: 1
-      }, 
+      },
       height: {
         suffix: 'px'
-      }, 
+      },
       width: {
         suffix: 'px'
       }
     };
-    
-    var setInputValue = function(aInputName, aInput, aValue) {
-      $('#' + aInputName + ' input').value = aValue + aInput.suffix;
+
+    setInputValue = function (aInputName, aInput, aValue) {
+      dom('#' + aInputName + ' input').value = aValue + aInput.suffix;
     };
 
-    for (var inputName in inputs) {
-      (function(inputName, input) {
-        PubSub.subscribe(inputName + '.change', function(aMsg, aData) {
-          if (input.toFixed) {
-            aData = aData.toFixed(input.toFixed);
-          }
-          setInputValue(inputName, input, aData);
-          $('#' + inputName + ' input').blur();
-        });
-        
-        PubSub.subscribe(inputName + '.parseerror', function(aMsg, aData) {
-          setInputValue(inputName, input, vp.memory[inputName].value);
-        });
+    addSubscribers = function (aInputName, aInput) {
+      $ps.subscribe(aInputName + '.change', function (aMsg, aData) {
+        if (!isNaN(aInput.toFixed)) {
+          aData = aData.toFixed(aInput.toFixed);
+        }
+        setInputValue(aInputName, aInput, aData);
+        dom('#' + aInputName + ' input').blur();
+      });
 
-        $('#' + inputName + ' input').addEventListener('change', function(e) {
-          vp.memory[inputName].value = e.target.value;
-        }, false);
+      $ps.subscribe(aInputName + '.parseerror', function (aMsg, aData) {
+        setInputValue(aInputName, aInput, vp.memory[aInputName].value);
+      });
+    };
 
-        $('#' + inputName + ' input').addEventListener('focus', function(e) {
-          $('#' + inputName).classList.add('focused');
-        }, false);
+    addDomListeners = function (aInputName, aInput) {
+      dom('#' + aInputName + ' input').addEventListener('change', function (aEvent) {
+        vp.memory[aInputName].value = aEvent.target.value;
+      }, false);
 
-        $('#' + inputName + ' input').addEventListener('blur', function(e) {
-          $('#' + inputName).classList.remove('focused');
-        }, false);
-      })(inputName, inputs[inputName]);
+      dom('#' + aInputName + ' input').addEventListener('focus', function (aEvent) {
+        dom('#' + aInputName).classList.add('focused');
+      }, false);
+
+      dom('#' + aInputName + ' input').addEventListener('blur', function (aEvent) {
+        dom('#' + aInputName).classList.remove('focused');
+      }, false);
+    };
+
+    for (inputName in inputs) {
+      if (inputs.hasOwnProperty(inputName)) {
+        addSubscribers(inputName, inputs[inputName]);
+        addDomListeners(inputName, inputs[inputName]);
+      }
     }
   })();
 
@@ -465,64 +521,76 @@ var vp = (function(vp) {
    * CURSORS
    */
 
-  (function() {
-    var cursors = {
-      scale: { 
-        area: $('#scale'),
+  (function () {
+    var cursors,
+        cursorName,
+        handleTitle = null,
+        addSubscriber,
+        horizontalHandlePadding;
+
+    cursors = {
+      scale: {
+        area: dom('#scale'),
         cssProperty: 'bottom'
       },
-      height: { 
-        area: $('#height'),
+      height: {
+        area: dom('#height'),
         cssProperty: 'bottom'
       },
       width: {
-        area: $('#width'),
+        area: dom('#width'),
         cssProperty: 'left'
       }
     };
-    
-    for (var cursorName in cursors) {
-      (function(cursorName, cursor) {
-        PubSub.subscribe(cursorName + '.change', function(aMsg, aData) {
-          aData = (aData - vp.memory[cursorName].min) * 100 / (vp.memory[cursorName].max - vp.memory[cursorName].min);
-          $('#' + cursorName + ' .cursor').style.setProperty(cursor.cssProperty, aData + '%', '');
-        });
-      })(cursorName, cursors[cursorName]);
+
+    addSubscriber = function (aCursorName, aCursor) {
+      $ps.subscribe(aCursorName + '.change', function (aMsg, aData) {
+        aData = (aData - vp.memory[aCursorName].min) * 100 / (vp.memory[aCursorName].max - vp.memory[aCursorName].min);
+        dom('#' + aCursorName + ' .cursor').style.setProperty(aCursor.cssProperty, aData + '%', '');
+      });
+    };
+
+    for (cursorName in cursors) {
+      if (cursors.hasOwnProperty(cursorName)) {
+        addSubscriber(cursorName, cursors[cursorName]);
+      }
     }
-    
-    var handleTitle = null;
-    
-    cursors.scale.computeValue = cursors.height.computeValue = function(x, y, memory) {
-      return memory.max - ((y - this.area.offsetTop) * (memory.max - memory.min) / this.area.clientHeight);
+
+    cursors.scale.computeValue = cursors.height.computeValue = function (aX, aY, aMemory) {
+      return aMemory.max - ((aY - this.area.offsetTop) * (aMemory.max - aMemory.min) / this.area.clientHeight);
     };
 
-    var horizontalHandlePadding = $('#width .cursor').clientWidth - $('#width input').clientWidth;
+    horizontalHandlePadding = dom('#width .cursor').clientWidth - dom('#width input').clientWidth;
 
-    cursors.width.computeValue = function(x, y, memory) {
-      var paddingLeft = !!+vp.memory.panel.value ? $('#panel').clientWidth : 0;
-      return (x - this.area.offsetLeft - paddingLeft - horizontalHandlePadding) * (memory.max - memory.min) / this.area.clientWidth + memory.min;
+    cursors.width.computeValue = function (aX, aY, aMemory) {
+      var paddingLeft = Boolean(Number(vp.memory.panel.value)) ? dom('#panel').clientWidth : 0;
+      return (aX - this.area.offsetLeft - paddingLeft - horizontalHandlePadding) * (aMemory.max - aMemory.min) / this.area.clientWidth + aMemory.min;
     };
-    
-    addEventListener('mousedown', function(e) {
-      if (e.target.classList.contains('handle')) {
-        e.preventDefault();
-        handleTitle = e.target.title;
+
+    $win.addEventListener('mousedown', function (aEvent) {
+      if (aEvent.target.classList.contains('handle')) {
+        aEvent.preventDefault();
+        handleTitle = aEvent.target.title;
         vp.memory.hold.value = '1';
-        $('#mask').classList.add(handleTitle + '-resize');
+        dom('#mask').classList.add(handleTitle + '-resize');
       }
     }, false);
 
-    addEventListener('mouseup', function(e) {
-      $('#mask').classList.remove(handleTitle + '-resize');
+    $win.addEventListener('mouseup', function (aEvent) {
+      dom('#mask').classList.remove(handleTitle + '-resize');
       vp.memory.hold.value = '0';
       handleTitle = null;
     }, false);
 
-    addEventListener('mousemove', function(e) {
-      if (handleTitle) {
-        var min = vp.memory[handleTitle].min,
-        max = vp.memory[handleTitle].max,
-        val = cursors[handleTitle].computeValue(e.clientX, e.clientY, vp.memory[handleTitle]);
+    $win.addEventListener('mousemove', function (aEvent) {
+      var min,
+          max,
+          val;
+
+      if (handleTitle !== null) {
+        min = vp.memory[handleTitle].min;
+        max = vp.memory[handleTitle].max;
+        val = cursors[handleTitle].computeValue(aEvent.clientX, aEvent.clientY, vp.memory[handleTitle]);
         val = Math.max(min, val);
         val = Math.min(val, max);
         val = vp.memory[handleTitle].converter(val);
@@ -538,15 +606,20 @@ var vp = (function(vp) {
   /**
    * HASH
    */
-  
-  (function() {
-    var lastHash = location.hash,
-    pattern = /^#[^=^&]{1,2}=[^=^&]*(&[^=^&]{1,2}=[^=^&]*)*$/;
 
-    var shortToLong = {
+  (function () {
+    var lastHash = $win.location.hash,
+        pattern = /^#[^=&]{1,2}=[^=&]*(&[^=&]{1,2}=[^=&]*)*$/,
+        shortToLong,
+        shortName,
+        parse,
+        processUpdates = true,
+        update;
+
+    shortToLong = {
       u: 'url',
       s: 'scale',
-      mi : 'min',
+      mi: 'min',
       ma: 'max',
       o: 'orientation',
       p: 'panel',
@@ -555,14 +628,17 @@ var vp = (function(vp) {
       f: 'filter'
     };
 
-    var parse = function(force) {
-      if (lastHash !== location.hash || force === true) {
-        var arrayParams = location.hash.slice(1).split('&'),
-        keyValue,
-        parsedParams = {};
+    parse = function (aForce) {
+      var arrayParams,
+          keyValue,
+          parsedParams = {},
+          i;
 
-        if (pattern.test(location.hash)) {
-          for (var i = 0; i < arrayParams.length; i += 1) {
+      if (lastHash !== $win.location.hash || aForce === true) {
+        arrayParams = $win.location.hash.slice(1).split('&');
+
+        if (pattern.test($win.location.hash)) {
+          for (i = 0; i < arrayParams.length; i += 1) {
             keyValue = arrayParams[i].split('=');
             parsedParams[keyValue[0]] = decodeURIComponent(keyValue[1]);
             vp.memory[shortToLong[keyValue[0]]].value = parsedParams[keyValue[0]];
@@ -573,38 +649,43 @@ var vp = (function(vp) {
         }
       }
     };
-  
-    addEventListener('hashchange', parse, false);
-    
-    var processUpdates = true;
 
-    var update = function() {
+    $win.addEventListener('hashchange', parse, false);
+
+    update = function () {
+      var newHash,
+          shortName;
+
       if (processUpdates) {
-        var newHash = [];
-        for (var shortName in shortToLong) {
-          newHash.push(shortName + '=' + encodeURIComponent(vp.memory[shortToLong[shortName]].value));
+        newHash = [];
+        for (shortName in shortToLong) {
+          if (shortToLong.hasOwnProperty(shortName)) {
+            newHash.push(shortName + '=' + encodeURIComponent(vp.memory[shortToLong[shortName]].value));
+          }
         }
 
         newHash = '#' + newHash.join('&');
-        if (newHash !== location.hash) {
-          lastHash = location.hash = newHash;
+        if (newHash !== $win.location.hash) {
+          lastHash = $win.location.hash = newHash;
         }
       }
     };
-    
-    for (var shortName in shortToLong) {
-      PubSub.subscribe(shortToLong[shortName] + '.change', update);
-      PubSub.subscribe(shortToLong[shortName] + '.parseerror', update);
+
+    for (shortName in shortToLong) {
+      if (shortToLong.hasOwnProperty(shortName)) {
+        $ps.subscribe(shortToLong[shortName] + '.change', update);
+        $ps.subscribe(shortToLong[shortName] + '.parseerror', update);
+      }
     }
-    
-    PubSub.subscribe('hold.change', function(aMsg, aData) {
-      processUpdates = !+aData;
+
+    $ps.subscribe('hold.change', function (aMsg, aData) {
+      processUpdates = !Boolean(Number(aData));
       if (processUpdates) {
         update();
       }
     });
-  
-    addEventListener('load', function() {
+
+    $win.addEventListener('load', function (aEvent) {
       parse(true);
     }, false);
   })();
@@ -616,35 +697,35 @@ var vp = (function(vp) {
   /**
    * TITLE
    */
-  
-  (function() {
-    var values = ['url', 'min', 'max', 'orientation'];
-    
-    var processUpdates = true;
 
-    var update = function() {
+  (function () {
+    var values = ['url', 'min', 'max', 'orientation'],
+        processUpdates = true,
+        update;
+
+    update = function () {
       if (processUpdates) {
         var min = vp.memory.min.value,
-        max = vp.memory.max.value,
-        orientation = vp.memory.orientation.value[0].toUpperCase(),
-        url = vp.memory.url.pattern.exec(vp.memory.url.value)[2];
+            max = vp.memory.max.value,
+            orientation = vp.memory.orientation.value[0].toUpperCase(),
+            url = vp.memory.url.pattern.exec(vp.memory.url.value)[2];
 
-        document.title = min + '\u2a09' + max + ' (' + orientation + ') ' + url + ' - Viewports';
+        $doc.title = min + '\u2a09' + max + ' (' + orientation + ') ' + url + ' - Viewports';
       }
     };
-    
+
     for (var i = 0; i < values.length; i++) {
-      PubSub.subscribe(values[i] + '.change', update);
+      $ps.subscribe(values[i] + '.change', update);
     }
-    
-    PubSub.subscribe('hold.change', function(aMsg, aData) {
-      processUpdates = !+aData;
+
+    $ps.subscribe('hold.change', function (aMsg, aData) {
+      processUpdates = !Boolean(Number(aData));
       if (processUpdates) {
         update(true);
       }
     });
-  
-    addEventListener('load.change', function() {
+
+    $win.addEventListener('load', function (aEvent) {
       update();
     }, false);
   })();
@@ -657,91 +738,91 @@ var vp = (function(vp) {
    * KEYBOARD
    */
 
-  (function() {
+  (function () {
     var listeners = {
-      'pageup': function() {
+      'pageup': function () {
         vp.memory.scale.alter(1);
       },
-      'pageup+shift': function() {
+      'pageup+shift': function () {
         vp.memory.scale.alter(10);
       },
-      'pagedown': function() {
+      'pagedown': function () {
         vp.memory.scale.alter(-1);
       },
-      'pagedown+shift': function() {
+      'pagedown+shift': function () {
         vp.memory.scale.alter(-10);
       },
-      
-      'up': function() {
+
+      'up': function () {
         vp.memory.height.alter(1);
       },
-      'up+shift': function() {
+      'up+shift': function () {
         vp.memory.height.alter(10);
       },
-      'down': function() {
+      'down': function () {
         vp.memory.height.alter(-1);
       },
-      'down+shift': function() {
+      'down+shift': function () {
         vp.memory.height.alter(-10);
       },
-      
-      'right': function() {
+
+      'right': function () {
         vp.memory.width.alter(1);
       },
-      'right+shift': function() {
+      'right+shift': function () {
         vp.memory.width.alter(10);
       },
-      'left': function() {
+      'left': function () {
         vp.memory.width.alter(-1);
       },
-      'left+shift': function() {
+      'left+shift': function () {
         vp.memory.width.alter(-10);
       },
-      
-      'O': function() {
+
+      'O': function () {
         vp.memory.hold.value = '0';
         vp.memory.orientation.toggle();
       },
-      
-      'P': function() {
+
+      'P': function () {
         vp.memory.hold.value = '0';
         vp.memory.panel.toggle();
       },
-      
-      'C': function() {
+
+      'C': function () {
         vp.memory.hold.value = '0';
         vp.memory.controls.toggle();
       },
-      
-      'A': function() {
+
+      'A': function () {
         vp.memory.hold.value = '0';
         vp.memory.autoscale.toggle();
       },
-      
-      'F': function() {
+
+      'F': function () {
         vp.memory.filter.toggle();
       }
     };
-    
-    addEventListener('keydown', function(e) {
-      if (e.target.nodeName === 'INPUT') {
+
+    $win.addEventListener('keydown', function (aEvent) {
+      if (aEvent.target.nodeName === 'INPUT') {
         return;
       }
-      
-      vp.memory.hold.value = '1';
-      
-      var keyCombination = keyNames(e);
 
-      if (listeners[keyCombination]) {
+      vp.memory.hold.value = '1';
+
+      var keyCombination = keyNames(aEvent);
+
+      if (listeners[keyCombination] !== undefined) {
         listeners[keyCombination]();
-        e.preventDefault();
+        aEvent.preventDefault();
       }
     }, false);
-    
-    addEventListener('keyup', function(e) {
-      var keyCombination = keyNames(e);
-      
-      if (listeners[keyCombination]) {
+
+    $win.addEventListener('keyup', function (aEvent) {
+      var keyCombination = keyNames(aEvent);
+
+      if (listeners[keyCombination] !== undefined) {
         vp.memory.hold.value = '0';
       }
     }, false);
@@ -755,8 +836,13 @@ var vp = (function(vp) {
    * DISPLAY
    */
 
-  (function() {
-    var displayElements = {
+  (function () {
+    var displayElements,
+        addSubscribers,
+        addDomListeners,
+        elementName;
+
+    displayElements = {
       orientation: 'both',
       panel: 'toggle',
       controls: 'toggle',
@@ -765,27 +851,35 @@ var vp = (function(vp) {
       hold: 'nobutton'
     };
 
-    for (var elementName in displayElements) {
-      (function(elementName) {
-        PubSub.subscribe(elementName + '.change', function(aMsg, aData) {
-          $('body').dataset[elementName] = aData;
-        });
-        
-        if (displayElements[elementName] === 'both') {
-          $('#' + elementName + '-' + vp.memory[elementName].a).addEventListener('click', function(e) {
-            vp.memory[elementName].value = vp.memory[elementName].a;
-          }, false);
-          
-          $('#' + elementName + '-' + vp.memory[elementName].b).addEventListener('click', function(e) {
-            vp.memory[elementName].value = vp.memory[elementName].b;
-          }, false);
-        }
-        if (displayElements[elementName] === 'toggle') {
-          $('#' + elementName + '-switch').addEventListener('click', function(e) {
-            vp.memory[elementName].toggle();
-          }, false);
-        }
-      })(elementName);
+    addSubscribers = function (aElementName) {
+      $ps.subscribe(aElementName + '.change', function (aMsg, aData) {
+        dom('body').dataset[aElementName] = aData;
+      });
+    };
+
+    addDomListeners = function (aElementName) {
+      if (displayElements[aElementName] === 'both') {
+        dom('#' + aElementName + '-' + vp.memory[aElementName].a).addEventListener('click', function (aEvent) {
+          vp.memory[aElementName].value = vp.memory[aElementName].a;
+        }, false);
+
+        dom('#' + aElementName + '-' + vp.memory[aElementName].b).addEventListener('click', function (aEvent) {
+          vp.memory[aElementName].value = vp.memory[aElementName].b;
+        }, false);
+      }
+
+      if (displayElements[aElementName] === 'toggle') {
+        dom('#' + aElementName + '-switch').addEventListener('click', function (aEvent) {
+          vp.memory[aElementName].toggle();
+        }, false);
+      }
+    };
+
+    for (elementName in displayElements) {
+      if (displayElements.hasOwnProperty(elementName)) {
+        addSubscribers(elementName);
+        addDomListeners(elementName);
+      }
     }
   })();
 
@@ -797,15 +891,22 @@ var vp = (function(vp) {
    * RESIZE
    */
 
-  (function() {
-    var values = ['min', 'max', 'orientation', 'panel', 'controls'];
-    
-    var scale = function(e) {
-      if (!!+vp.memory.autoscale.value) {
-        var clientH = $('#viewport-wrapper').clientHeight,
-        clientW = $('#viewport-wrapper').clientWidth,
-        height = vp.memory.height.value,
-        width = vp.memory.width.value,
+  (function () {
+    var values = ['min', 'max', 'orientation', 'panel', 'controls'],
+        scale;
+
+    scale = function (aEvent) {
+      var clientH,
+          clientW,
+          height,
+          width,
+          newScale;
+
+      if (Boolean(Number(vp.memory.autoscale.value))) {
+        clientH = dom('#viewport-wrapper').clientHeight;
+        clientW = dom('#viewport-wrapper').clientWidth;
+        height = vp.memory.height.value;
+        width = vp.memory.width.value;
         newScale = vp.memory.scale.value;
 
         if (height > clientH || width > clientW) {
@@ -822,14 +923,14 @@ var vp = (function(vp) {
         vp.memory.scale.value = newScale;
       }
     };
-    
+
     for (var i = 0; i < values.length; i++) {
-      PubSub.subscribe(values[i] + '.change', scale);
+      $ps.subscribe(values[i] + '.change', scale);
     }
-    
-    addEventListener('resize', scale, false);
-    addEventListener('transitionend', scale, false);
+
+    $win.addEventListener('resize', scale, false);
+    $win.addEventListener('transitionend', scale, false);
   })();
-  
+
   return vp;
-})({});
+})(window, document, PubSub, PrefixFree, ich);

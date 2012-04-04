@@ -1,103 +1,112 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <title>Viewports</title>
-    <link rel="stylesheet" type="text/css" href="index.css">
-    <script type="text/javascript" src="lib/prefixfree.min.js"></script>
-  </head>
-  <body data-orientation="portrait" data-panel="1" data-controls="1" data-autoscale="1" data-filter="all" data-no-select="0" data-hold="0">
-    <h1>Viewports</h1>
+<head>
+  <meta charset="utf-8">
+  <title>Viewports</title>
+  <link rel="stylesheet" type="text/css" href="index.css">
+  <script type="text/javascript" src="lib/prefixfree.min.js"></script>
+</head>
+<body data-orientation="portrait" data-panel="1" data-controls="1" data-autoscale="1" data-filter="all"
+      data-no-select="0" data-hold="0">
+<h1>Viewports</h1>
 
-    <div id="panel">
-      <div id="list"></div>
+<div id="panel">
+  <div id="list"></div>
 
-      <div id="filter">
-        <button id="filter-all">all</button>
-        <button id="filter-favourites">favourites</button>
-      </div>
+  <div id="filter">
+    <button id="filter-all">all</button>
+    <button id="filter-favourites">favourites</button>
+  </div>
+</div>
+
+<div id="playground">
+  <button class="control" id="orientation-landscape" title="rotate viewport to landscape">landscape</button>
+
+  <button class="control" id="orientation-portrait" title="rotate viewport to portrait">portrait</button>
+
+  <button class="control" id="panel-switch" title="list of predefined and custom viewports">
+    <span data-status="1">hide</span><span data-status="0">show</span> panel
+  </button>
+
+  <button class="control" id="controls-switch" title="control buttons and inputs">
+    <span data-status="1">hide</span><span data-status="0">show</span> controls
+  </button>
+
+  <div class="control" id="url">
+    <input type="text" title="url" spellcheck="false" value="">
+  </div>
+
+  <button class="control" id="autoscale-switch"
+          title="auto scale the viewport fo fit inside the browser window">auto-scale</button>
+
+  <a class="control" id="help-link" href="help" target="_blank" title="help">help</a>
+
+  <div class="cursor-area" id="scale">
+    <div class="cursor">
+      <div class="handle" title="scale"></div>
+      <input type="text" title="scale" value="">
     </div>
+  </div>
 
-    <div id="playground">
-      <button class="control" id="orientation-landscape" title="rotate viewport to landscape">landscape</button>
-      
-      <button class="control" id="orientation-portrait" title="rotate viewport to portrait">portrait</button>
-      
-      <button class="control" id="panel-switch" title="list of predefined and custom viewports">
-        <span data-status="1">hide</span><span data-status="0">show</span> panel
+  <div class="cursor-area" id="height">
+    <div class="cursor">
+      <input type="text" title="height" value="">
+
+      <div class="handle" title="height"></div>
+    </div>
+  </div>
+
+  <div class="cursor-area" id="width">
+    <div class="cursor">
+      <input type="text" title="width" value="">
+
+      <div class="handle" title="width"></div>
+    </div>
+  </div>
+
+  <div id="viewport-wrapper">
+    <iframe id="viewport" src=""></iframe>
+    <div id="chrome"></div>
+  </div>
+</div>
+
+<div id="mask"></div>
+
+<div id="sad-face">
+  <div class="message">
+    ☹<br>
+    your window<br>
+    is too small<br>
+    <span class="min-size">800⨉350</span> minimum
+  </div>
+</div>
+
+<script type="text/javascript" src="lib/PubSubJS.min.js"></script>
+<script type="text/javascript" src="lib/ICanHaz.min.js"></script>
+
+<script id="listTemplate" type="text/html">
+  {{#items}}
+  <div class="viewport" data-favourite="{{favourite}}" data-size-min="{{size.min}}" data-size-max="{{size.max}}">
+    <button class="favourite">★</button>
+
+    <div class="name">{{name}}</div>
+    <div class="size">
+      <span class="min">{{size.min}}</span> ⨉ <span class="max">{{size.max}}</span>
+    </div>
+    <div class="details">{{details}}</div>
+    <div class="actions">
+      <button class="orientation" data-size-min="{{size.min}}" data-size-max="{{size.max}}"
+              data-orientation="landscape">landscape
       </button>
-      
-      <button class="control" id="controls-switch" title="control buttons and inputs">
-        <span data-status="1">hide</span><span data-status="0">show</span> controls
+      <button class="orientation" data-size-min="{{size.min}}" data-size-max="{{size.max}}" data-orientation="portrait">
+        portrait
       </button>
-      
-      <div class="control" id="url">
-        <input type="text" title="url" spellcheck="false" value="">
-      </div>
-      
-      <button class="control" id="autoscale-switch" title="auto scale the viewport fo fit inside the browser window">auto-scale</button>
-
-      <a class="control" id="help-link" href="help" target="_blank" title="help">help</a>
-
-      <div class="cursor-area" id="scale">
-        <div class="cursor">
-          <div class="handle" title="scale"></div>
-          <input type="text" title="scale" value="">
-        </div>
-      </div>
-
-      <div class="cursor-area" id="height">
-        <div class="cursor">
-          <input type="text" title="height" value="">
-          <div class="handle" title="height"></div>
-        </div>
-      </div>
-
-      <div class="cursor-area" id="width">
-        <div class="cursor">
-          <input type="text" title="width" value="">
-          <div class="handle" title="width"></div>
-        </div>
-      </div>
-
-      <div id="viewport-wrapper">
-        <iframe id="viewport" src=""></iframe>
-        <div id="chrome"></div>
-      </div>
     </div>
+  </div>
+  {{/items}}
+</script>
 
-    <div id="mask"></div>
-
-    <div id="sad-face">
-      <div class="message">
-        ☹<br>
-        your window<br>
-        is too small<br>
-        <span class="min-size">800⨉350</span> minimum
-      </div>
-    </div>
-    
-    <script type="text/javascript" src="lib/PubSubJS.min.js"></script>
-    <script type="text/javascript" src="lib/ICanHaz.min.js"></script>
-    
-    <script id="listTemplate" type="text/html">
-      {{#items}}
-      <div class="viewport" data-favourite="{{favourite}}" data-size-min="{{size.min}}" data-size-max="{{size.max}}">
-        <button class="favourite">★</button>
-        <div class="name">{{name}}</div>
-        <div class="size">
-          <span class="min">{{size.min}}</span> ⨉ <span class="max">{{size.max}}</span>
-        </div>
-        <div class="details">{{details}}</div>
-        <div class="actions">
-          <button class="orientation" data-size-min="{{size.min}}" data-size-max="{{size.max}}" data-orientation="landscape">landscape</button>
-          <button class="orientation" data-size-min="{{size.min}}" data-size-max="{{size.max}}" data-orientation="portrait">portrait</button>
-        </div>
-      </div>
-      {{/items}}
-    </script>
-    
-    <script type="text/javascript" src="viewports.js"></script>
-    <script type="text/javascript" src="viewports-list.js"></script>
-  </body>
+<script type="text/javascript" src="viewports.js"></script>
+<script type="text/javascript" src="viewports-list.js"></script>
+</body>
 </html>
