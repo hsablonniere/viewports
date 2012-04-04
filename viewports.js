@@ -114,22 +114,22 @@ var vp = (function(vp) {
     pattern: /^(.*)$/,
     converter: String,
 
-    set: function(aValue) {
+    set value (aValue) {
       aValue = this.parse(aValue);
-      if (aValue!== null && aValue !== this.value) {
-        this.value = aValue;
+      if (aValue!== null && aValue !== this._value) {
+        this._value = aValue;
         PubSub.publish(this.name + '.change', aValue, true);
       }
     },
 
-    init: function() {
-      if (this.value === undefined) {
-        this.set(this.defaultValue);
-      }
+    get value () {
+      return this._value;
     },
 
-    get: function() {
-      return this.value;
+    init: function() {
+      if (this.value === undefined) {
+        this.value = this.defaultValue;
+      }
     },
 
     parse: function(aValue) {
@@ -166,7 +166,7 @@ var vp = (function(vp) {
     },
 
     alter: function(aMount) {
-      this.set(this.get() + aMount);
+      this.value += aMount;
     }
   });
 
@@ -188,7 +188,7 @@ var vp = (function(vp) {
     },
 
     toggle: function() {
-      this.set(this.get() === this.a ? this.b : this.a);
+      this.value = this.value === this.a ? this.b : this.a;
     }
   });
 
@@ -294,8 +294,8 @@ var vp = (function(vp) {
     var transformMinMaxToHeightWidth = function(aMsg, aData) {
       var valueEvent = aMsg.split('.');
       
-      if (vp.memory.orientation.get() === 'portrait' && valueEvent[0] === 'max'
-        || vp.memory.orientation.get() === 'landscape' && valueEvent[0] === 'min') {
+      if (vp.memory.orientation.value === 'portrait' && valueEvent[0] === 'max'
+        || vp.memory.orientation.value === 'landscape' && valueEvent[0] === 'min') {
         valueEvent[0] = 'height';
       } else {
         valueEvent[0] = 'width';
@@ -311,16 +311,16 @@ var vp = (function(vp) {
     PubSub.subscribe('max.parseerror', transformMinMaxToHeightWidth);
 
     PubSub.subscribe('orientation.change', function(aMsg, aData) {
-      if (vp.memory.orientation.get() === 'portrait') {
+      if (vp.memory.orientation.value === 'portrait') {
         vp.memory.height = vp.memory.max;
-        PubSub.publish('height.change', vp.memory.max.get(), true);
+        PubSub.publish('height.change', vp.memory.max.value, true);
         vp.memory.width = vp.memory.min;
-        PubSub.publish('width.change', vp.memory.min.get(), true);
+        PubSub.publish('width.change', vp.memory.min.value, true);
       } else {
         vp.memory.height = vp.memory.min;
-        PubSub.publish('height.change', vp.memory.min.get(), true);
+        PubSub.publish('height.change', vp.memory.min.value, true);
         vp.memory.width = vp.memory.max;
-        PubSub.publish('width.change', vp.memory.max.get(), true);
+        PubSub.publish('width.change', vp.memory.max.value, true);
       }
     });
   })();
@@ -340,17 +340,17 @@ var vp = (function(vp) {
     
     $('#list').addEventListener('click', function(e) {
       if (e.target.classList.contains('orientation')) {
-        vp.memory.min.set(e.target.dataset.sizeMin);
-        vp.memory.max.set(e.target.dataset.sizeMax);
-        vp.memory.orientation.set(e.target.dataset.orientation);
+        vp.memory.min.value = e.target.dataset.sizeMin;
+        vp.memory.max.value = e.target.dataset.sizeMax;
+        vp.memory.orientation.value = e.target.dataset.orientation;
       }
     }, false);
     
     var values = ['min', 'max', 'width', 'height'];
     
     var selectViewport = function(aMsg, aData) {
-      var min = vp.memory.min.get(),
-      max = vp.memory.max.get();
+      var min = vp.memory.min.value,
+      max = vp.memory.max.value;
 
       var currentSelection = $('.viewport[data-selected="1"]', true);
       if (currentSelection !== null) {
@@ -439,11 +439,11 @@ var vp = (function(vp) {
         });
         
         PubSub.subscribe(inputName + '.parseerror', function(aMsg, aData) {
-          setInputValue(inputName, input, vp.memory[inputName].get());
+          setInputValue(inputName, input, vp.memory[inputName].value);
         });
 
         $('#' + inputName + ' input').addEventListener('change', function(e) {
-          vp.memory[inputName].set(e.target.value);
+          vp.memory[inputName].value = e.target.value;
         }, false);
 
         $('#' + inputName + ' input').addEventListener('focus', function(e) {
@@ -499,7 +499,7 @@ var vp = (function(vp) {
     var horizontalHandlePadding = $('#width .cursor').clientWidth - $('#width input').clientWidth;
 
     cursors.width.computeValue = function(x, y, memory) {
-      var paddingLeft = !!+vp.memory.panel.get() ? $('#panel').clientWidth : 0;
+      var paddingLeft = !!+vp.memory.panel.value ? $('#panel').clientWidth : 0;
       return (x - this.area.offsetLeft - paddingLeft - horizontalHandlePadding) * (memory.max - memory.min) / this.area.clientWidth + memory.min;
     };
     
@@ -507,14 +507,14 @@ var vp = (function(vp) {
       if (e.target.classList.contains('handle')) {
         e.preventDefault();
         handleTitle = e.target.title;
-        vp.memory.hold.set('1');
+        vp.memory.hold.value = '1';
         $('#mask').classList.add(handleTitle + '-resize');
       }
     }, false);
 
     addEventListener('mouseup', function(e) {
       $('#mask').classList.remove(handleTitle + '-resize');
-      vp.memory.hold.set('0');
+      vp.memory.hold.value = '0';
       handleTitle = null;
     }, false);
 
@@ -526,7 +526,7 @@ var vp = (function(vp) {
         val = Math.max(min, val);
         val = Math.min(val, max);
         val = vp.memory[handleTitle].converter(val);
-        vp.memory[handleTitle].set(val);
+        vp.memory[handleTitle].value = val;
       }
     }, false);
   })();
@@ -565,7 +565,7 @@ var vp = (function(vp) {
           for (var i = 0; i < arrayParams.length; i += 1) {
             keyValue = arrayParams[i].split('=');
             parsedParams[keyValue[0]] = decodeURIComponent(keyValue[1]);
-            vp.memory[shortToLong[keyValue[0]]].set(parsedParams[keyValue[0]]);
+            vp.memory[shortToLong[keyValue[0]]].value = parsedParams[keyValue[0]];
           }
           if (arrayParams.length !== Object.keys(shortToLong).length) {
             update();
@@ -582,7 +582,7 @@ var vp = (function(vp) {
       if (processUpdates) {
         var newHash = [];
         for (var shortName in shortToLong) {
-          newHash.push(shortName + '=' + encodeURIComponent(vp.memory[shortToLong[shortName]].get()));
+          newHash.push(shortName + '=' + encodeURIComponent(vp.memory[shortToLong[shortName]].value));
         }
 
         newHash = '#' + newHash.join('&');
@@ -624,10 +624,10 @@ var vp = (function(vp) {
 
     var update = function() {
       if (processUpdates) {
-        var min = vp.memory.min.get(),
-        max = vp.memory.max.get(),
-        orientation = vp.memory.orientation.get()[0].toUpperCase(),
-        url = vp.memory.url.pattern.exec(vp.memory.url.get())[2];
+        var min = vp.memory.min.value,
+        max = vp.memory.max.value,
+        orientation = vp.memory.orientation.value[0].toUpperCase(),
+        url = vp.memory.url.pattern.exec(vp.memory.url.value)[2];
 
         document.title = min + '\u2a09' + max + ' (' + orientation + ') ' + url + ' - Viewports';
       }
@@ -699,22 +699,22 @@ var vp = (function(vp) {
       },
       
       'O': function() {
-        vp.memory.hold.set('0');
+        vp.memory.hold.value = '0';
         vp.memory.orientation.toggle();
       },
       
       'P': function() {
-        vp.memory.hold.set('0');
+        vp.memory.hold.value = '0';
         vp.memory.panel.toggle();
       },
       
       'C': function() {
-        vp.memory.hold.set('0');
+        vp.memory.hold.value = '0';
         vp.memory.controls.toggle();
       },
       
       'A': function() {
-        vp.memory.hold.set('0');
+        vp.memory.hold.value = '0';
         vp.memory.autoscale.toggle();
       },
       
@@ -728,7 +728,7 @@ var vp = (function(vp) {
         return;
       }
       
-      vp.memory.hold.set('1');
+      vp.memory.hold.value = '1';
       
       var keyCombination = keyNames(e);
 
@@ -742,7 +742,7 @@ var vp = (function(vp) {
       var keyCombination = keyNames(e);
       
       if (listeners[keyCombination]) {
-        vp.memory.hold.set('0');
+        vp.memory.hold.value = '0';
       }
     }, false);
   })();
@@ -773,11 +773,11 @@ var vp = (function(vp) {
         
         if (displayElements[elementName] === 'both') {
           $('#' + elementName + '-' + vp.memory[elementName].a).addEventListener('click', function(e) {
-            vp.memory[elementName].set(vp.memory[elementName].a);
+            vp.memory[elementName].value = vp.memory[elementName].a;
           }, false);
           
           $('#' + elementName + '-' + vp.memory[elementName].b).addEventListener('click', function(e) {
-            vp.memory[elementName].set(vp.memory[elementName].b);
+            vp.memory[elementName].value = vp.memory[elementName].b;
           }, false);
         }
         if (displayElements[elementName] === 'toggle') {
@@ -801,12 +801,12 @@ var vp = (function(vp) {
     var values = ['min', 'max', 'orientation', 'panel', 'controls'];
     
     var scale = function(e) {
-      if (!!+vp.memory.autoscale.get()) {
+      if (!!+vp.memory.autoscale.value) {
         var clientH = $('#viewport-wrapper').clientHeight,
         clientW = $('#viewport-wrapper').clientWidth,
-        height = vp.memory.height.get(),
-        width = vp.memory.width.get(),
-        newScale = vp.memory.scale.get();
+        height = vp.memory.height.value,
+        width = vp.memory.width.value,
+        newScale = vp.memory.scale.value;
 
         if (height > clientH || width > clientW) {
           if ((height - clientH) / height > (width - clientW) / width) {
@@ -819,7 +819,7 @@ var vp = (function(vp) {
         }
 
         newScale = vp.memory.scale.converter(newScale);
-        vp.memory.scale.set(newScale);
+        vp.memory.scale.value = newScale;
       }
     };
     
