@@ -235,7 +235,9 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
    * CORE
    */
 
-  vp = {};
+  vp = {
+    rootUrl: $win.location.protocol + '//' + $win.location.host + $win.location.pathname
+  };
 
 
 
@@ -249,7 +251,7 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
     url: extendObject(protos.value, {
       name: 'url',
       pattern: /^(https?:\/\/(.*?)(?::[0-9]{1,5})?(?:\/.*)?)?$/,
-      defaultValue: $win.location.protocol + '//' + $win.location.host + $win.location.pathname + 'help'
+      defaultValue: vp.rootUrl + 'help'
     }),
 
     scale: extendObject(protos.numericValue, {
@@ -902,6 +904,22 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
         addDomListeners(elementName);
       }
     }
+  })();
+
+
+
+
+
+  /**
+   * BOOKMARKLETS
+   */
+
+  (function () {
+    dom('a[data-bookmarklet="only"]').addEventListener('click', function(aEvent) {
+      aEvent.preventDefault();
+    }, false);
+
+    dom('h1 a').href = 'javascript: location.href="' + vp.rootUrl + '#u=" + encodeURIComponent(location.href)';
   })();
 
 

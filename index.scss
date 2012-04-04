@@ -128,23 +128,30 @@ h1 {
   top: 0;
   transform-origin: 0 0;
   width: $button-width;
-  
-  [data-panel="1"] & {
-    color: $blue;
-    text-shadow: 0 1px 0 #FFF;
-  }
-  
-  [data-panel="0"][data-controls="1"] & {
-    color: #FFF;
-    text-shadow: 1px 1px 0 #000;
-  }
-  
+
   [data-panel="0"][data-controls="0"] & {
-    color: $blue;
     left: 0;
     text-align: center;
     top: $gutter + $button-width;
     transform: rotate(-90deg);
+  }
+
+  a {
+    text-decoration: none;
+
+    [data-panel="1"] & {
+      color: $blue;
+      text-shadow: 0 1px 0 #FFF;
+    }
+
+    [data-panel="0"][data-controls="1"] & {
+      color: #FFF;
+      text-shadow: 1px 1px 0 #000;
+    }
+
+    [data-panel="0"][data-controls="0"] & {
+      color: $blue;
+    }
   }
 }
 
