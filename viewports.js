@@ -249,7 +249,7 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
     url: extendObject(protos.value, {
       name: 'url',
       pattern: /^(https?:\/\/(.*?)(?::[0-9]{1,5})?(?:\/.*)?)?$/,
-      defaultValue: $win.location.origin + $win.location.pathname + 'help'
+      defaultValue: $win.location.protocol + '//' + $win.location.host + $win.location.pathname + 'help'
     }),
 
     scale: extendObject(protos.numericValue, {
