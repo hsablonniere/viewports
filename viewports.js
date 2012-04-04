@@ -137,7 +137,7 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
     pattern: /^(.*)$/,
     converter: String,
 
-    set value (aValue) {
+    set value(aValue) {
       aValue = this.parse(aValue);
 
       if (aValue !== null && aValue !== this._value) {
@@ -146,7 +146,7 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
       }
     },
 
-    get value () {
+    get value() {
       return this._value;
     },
 
@@ -526,6 +526,7 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
         cursorName,
         handleTitle = null,
         addSubscriber,
+        firstAltEvent = null,
         horizontalHandlePadding;
 
     cursors = {
@@ -557,14 +558,26 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
     }
 
     cursors.scale.computeValue = cursors.height.computeValue = function (aX, aY, aMemory) {
-      return aMemory.max - ((aY - this.area.offsetTop) * (aMemory.max - aMemory.min) / this.area.clientHeight);
+      var coeff = (aMemory.max - aMemory.min) / this.area.clientHeight;
+
+      if (firstAltEvent !== null) {
+        aY = firstAltEvent.clientY + ((aY - firstAltEvent.clientY) / (coeff * 3));
+      }
+
+      return aMemory.max - ((aY - this.area.offsetTop) * coeff);
     };
 
-    horizontalHandlePadding = dom('#width .cursor').clientWidth - dom('#width input').clientWidth;
+    horizontalHandlePadding = dom('#width .cursor').clientWidth - dom('#width input').clientWidth - 5;
 
     cursors.width.computeValue = function (aX, aY, aMemory) {
-      var paddingLeft = Boolean(Number(vp.memory.panel.value)) ? dom('#panel').clientWidth : 0;
-      return (aX - this.area.offsetLeft - paddingLeft - horizontalHandlePadding) * (aMemory.max - aMemory.min) / this.area.clientWidth + aMemory.min;
+      var paddingLeft = Boolean(Number(vp.memory.panel.value)) ? dom('#panel').clientWidth : 0,
+          coeff = (aMemory.max - aMemory.min) / this.area.clientWidth;
+
+      if (firstAltEvent !== null) {
+        aX = firstAltEvent.clientX + ((aX - firstAltEvent.clientX) / (coeff * 3));
+      }
+
+      return (aX - this.area.offsetLeft - paddingLeft - horizontalHandlePadding) * coeff + aMemory.min;
     };
 
     $win.addEventListener('mousedown', function (aEvent) {
@@ -586,6 +599,14 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
       var min,
           max,
           val;
+
+      if (firstAltEvent === null && aEvent.altKey) {
+        firstAltEvent = aEvent;
+      }
+
+      if (firstAltEvent !== null && !aEvent.altKey) {
+        firstAltEvent = null;
+      }
 
       if (handleTitle !== null) {
         min = vp.memory[handleTitle].min;
