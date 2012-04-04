@@ -8,7 +8,7 @@
 </head>
 <body data-orientation="portrait" data-panel="1" data-controls="1" data-autoscale="1" data-filter="all"
       data-no-select="0" data-hold="0">
-<h1><a href="" data-bookmarklet="only" title="bookmark me and load websites directly into Viewports">Viewports</a></h1>
+<h1><a href="" title="bookmark me and load websites directly into Viewports" data-bookmarklet="only">Viewports</a></h1>
 
 <div id="panel">
   <div id="list"></div>
@@ -85,7 +85,7 @@
 <script type="text/javascript" src="lib/ICanHaz.min.js"></script>
 
 <script id="listTemplate" type="text/html">
-  {{#items}}
+  {{#list.items}}
   <div class="viewport" data-favourite="{{favourite}}" data-size-min="{{size.min}}" data-size-max="{{size.max}}">
     <button class="favourite">★</button>
 
@@ -95,15 +95,19 @@
     </div>
     <div class="details">{{details}}</div>
     <div class="actions">
-      <button class="orientation" data-size-min="{{size.min}}" data-size-max="{{size.max}}"
-              data-orientation="landscape">landscape
-      </button>
-      <button class="orientation" data-size-min="{{size.min}}" data-size-max="{{size.max}}" data-orientation="portrait">
-        portrait
-      </button>
+      <a href="javascript:location.href='{{getRootUrl}}#u='+encodeURIComponent(location.href)+'&mi={{size.min}}&ma={{size.max}}&o=landscape'"
+         class="button orientation" title="click me to apply or bookmark me and load websites directly into Viewports with {{size.min}}⨉{{size.max}} in landscape"
+         data-bookmarklet="only" data-size-min="{{size.min}}" data-size-max="{{size.max}}" data-orientation="landscape">
+        <span class="bookmarkletText">VP {{size.min}}⨉{{size.max}} (L)</span>
+      </a>
+      <a href="javascript:location.href='{{getRootUrl}}#u='+encodeURIComponent(location.href)+'&mi={{size.min}}&ma={{size.max}}&o=portrait'"
+         class="button orientation" title="click me to apply or bookmark me and load websites directly into Viewports with {{size.min}}⨉{{size.max}} in portrait"
+         data-bookmarklet="only" data-size-min="{{size.min}}" data-size-max="{{size.max}}" data-orientation="portrait">
+        <span class="bookmarkletText">VP {{size.min}}⨉{{size.max}} (P)</span>
+      </a>
     </div>
   </div>
-  {{/items}}
+  {{/list.items}}
 </script>
 
 <script type="text/javascript" src="viewports.js"></script>

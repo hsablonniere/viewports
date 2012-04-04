@@ -236,7 +236,9 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
    */
 
   vp = {
-    rootUrl: $win.location.protocol + '//' + $win.location.host + $win.location.pathname
+    getRootUrl: function () {
+      return $win.location.protocol + '//' + $win.location.host + $win.location.pathname;
+    }
   };
 
 
@@ -251,7 +253,7 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
     url: extendObject(protos.value, {
       name: 'url',
       pattern: /^(https?:\/\/(.*?)(?::[0-9]{1,5})?(?:\/.*)?)?$/,
-      defaultValue: vp.rootUrl + 'help'
+      defaultValue: vp.getRootUrl() + 'help'
     }),
 
     scale: extendObject(protos.numericValue, {
@@ -380,7 +382,7 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
         i;
 
     $win.addEventListener('load', function (aEvent) {
-      dom('#list').innerHTML = $ich.listTemplate(vp.list);
+      dom('#list').innerHTML = $ich.listTemplate(vp);
     }, false);
 
     dom('#list').addEventListener('click', function (aEvent) {
@@ -915,11 +917,15 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
    */
 
   (function () {
-    dom('a[data-bookmarklet="only"]').addEventListener('click', function(aEvent) {
-      aEvent.preventDefault();
+    $win.addEventListener('click', function (aEvent) {
+      if (aEvent.target.dataset !== null && aEvent.target.dataset.bookmarklet === 'only') {
+        aEvent.preventDefault();
+      }
     }, false);
 
-    dom('h1 a').href = 'javascript: location.href="' + vp.rootUrl + '#u=" + encodeURIComponent(location.href)';
+    $win.addEventListener('load', function (aEvent) {
+      dom('h1 a').href = 'javascript: location.href="' + vp.getRootUrl() + '#u=" + encodeURIComponent(location.href)';
+    }, false);
   })();
 
 
@@ -972,4 +978,5 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
   })();
 
   return vp;
-})(window, document, PubSub, PrefixFree, ich);
+})
+    (window, document, PubSub, PrefixFree, ich);

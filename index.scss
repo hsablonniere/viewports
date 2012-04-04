@@ -155,7 +155,8 @@ h1 {
   }
 }
 
-button {
+button,
+a.button {
   @include button;
   border: 1px solid $light-grey;
   border-radius: $border-radius-mini;
@@ -164,6 +165,8 @@ button {
   cursor: pointer;
   line-height: $font-size * 1.5;
   padding: 0 $gutter;
+  text-align: center;
+  text-decoration: none;
   text-shadow: 0 1px 0 white;
 }
 
@@ -303,6 +306,18 @@ button {
     display: block;
     margin: 3px 0;
     width: $button-width-orientation-landscape;
+  }
+
+  [data-orientation="landscape"]:after {
+    content: 'landscape';
+  }
+
+  [data-orientation="portrait"]:after {
+    content: 'portrait';
+  }
+
+  .bookmarkletText {
+    display: none;
   }
 }
 
