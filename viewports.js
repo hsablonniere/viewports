@@ -253,7 +253,7 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
     url: extendObject(protos.value, {
       name: 'url',
       pattern: /^(https?:\/\/(.*?)(?::[0-9]{1,5})?(?:\/.*)?)?$/,
-      defaultValue: vp.getRootUrl() + 'help'
+      defaultValue: vp.getRootUrl() + 'help/'
     }),
 
     scale: extendObject(protos.numericValue, {
