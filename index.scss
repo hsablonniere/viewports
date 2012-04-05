@@ -301,19 +301,14 @@ a.button {
     top: $gutter / 1.5;
   }
 
-  [data-orientation="landscape"],
-  [data-orientation="portrait"] {
+  .actions .orientation {
     display: block;
     margin: 3px 0;
     width: $button-width-orientation-landscape;
   }
 
-  [data-orientation="landscape"]:after {
-    content: 'landscape';
-  }
-
-  [data-orientation="portrait"]:after {
-    content: 'portrait';
+  .actions .orientation:after {
+    content: attr(data-orientation);
   }
 
   .bookmarkletText {

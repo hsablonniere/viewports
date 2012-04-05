@@ -1,4 +1,4 @@
-/*jshint forin:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, strict:true, undef:true, curly:true, browser:true, es5:true, indent:2, trailing:true */
+/*jshint forin:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, strict:true, undef:true, curly:true, browser:true, es5:true, indent:2, trailing:true scripturl:true */
 /*global PubSub:false, PrefixFree:false, ich:false */
 
 var vp = (function ($win, $doc, $ps, $pf, $ich) {
@@ -924,7 +924,7 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
     }, false);
 
     $win.addEventListener('load', function (aEvent) {
-      dom('h1 a').href = 'javascript: location.href="' + vp.getRootUrl() + '#u=" + encodeURIComponent(location.href)';
+      dom('h1 a').href = 'javascript:location.href="' + vp.getRootUrl() + '#u="+encodeURIComponent(location.href)';
     }, false);
   })();
 
@@ -978,5 +978,4 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
   })();
 
   return vp;
-})
-    (window, document, PubSub, PrefixFree, ich);
+})(window, document, PubSub, PrefixFree, ich);
