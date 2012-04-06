@@ -766,14 +766,6 @@ button.control {
     transition-delay: $duration * 1.5;
     transition-property: height, width, margin, transform;
   }
-  
-  [data-orientation="landscape"] & {
-    animation-name: rotate-landscape;
-  }
-  
-  [data-orientation="portrait"] & {
-    animation-name: rotate-portrait;
-  }
 }
 
 #chrome {

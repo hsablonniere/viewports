@@ -265,21 +265,14 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
       max: 100
     }),
 
-    min: extendObject(protos.dimensionValue, {
-      name: 'min',
-      defaultValue: 320
-    }),
-
-    max: extendObject(protos.dimensionValue, {
-      name: 'max',
+    height: extendObject(protos.dimensionValue, {
+      name: 'height',
       defaultValue: 480
     }),
 
-    orientation: extendObject(protos.dualValue, {
-      name: 'orientation',
-      defaultValue: 'portrait',
-      a: 'portrait',
-      b: 'landscape'
+    width: extendObject(protos.dimensionValue, {
+      name: 'width',
+      defaultValue: 320
     }),
 
     panel: extendObject(protos.dualValue, {
@@ -311,20 +304,13 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
   };
 
   $win.addEventListener('load', function (aEvent) {
-    vp.memory.height = vp.memory.max;
-    vp.memory.width = vp.memory.min;
-  }, false);
+    var values = ['url', 'scale', 'height', 'width', 'panel', 'controls', 'autoscale', 'filter', 'hold'],
+        i;
 
-  $win.addEventListener('load', function (aEvent) {
-    var value;
-
-    for (value in vp.memory) {
-      if (vp.memory.hasOwnProperty(value)) {
-        vp.memory[value].init();
-      }
+    for (i = 0; i < values.length; i++) {
+      vp.memory[values[i]].init();
     }
   }, false);
-
 
 
 
@@ -334,38 +320,37 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
    */
 
   (function () {
-    var publishMinMaxToHeightWidth = function (aMsg, aData) {
-      var valueEvent = aMsg.split('.');
+    vp.memory.orientation = {
+      name: 'orientation',
+      a: 'portrait',
+      b: 'landscape',
 
-      if (vp.memory.orientation.value === 'portrait' && valueEvent[0] === 'max' ||
-          vp.memory.orientation.value === 'landscape' && valueEvent[0] === 'min') {
-        valueEvent[0] = 'height';
-      } else {
-        valueEvent[0] = 'width';
+      set value(aValue) {
+        if (this.value === this.a && aValue === this.b ||
+            this.value === this.b && aValue === this.a) {
+          this.toggle();
+        }
+      },
+
+      get value() {
+        return vp.memory.height.value > vp.memory.width.value ? this.a : this.b;
+      },
+
+      toggle: function () {
+        var height = vp.memory.height.value,
+            width = vp.memory.width.value;
+
+        vp.memory.height.value = width;
+        vp.memory.width.value = height;
       }
-
-      $ps.publish(valueEvent.join('.'), aData, true);
     };
 
-    $ps.subscribe('min.change', publishMinMaxToHeightWidth);
-    $ps.subscribe('min.parseerror', publishMinMaxToHeightWidth);
+    var updateOrientation = function (aMsg, aData) {
+      $ps.publish('orientation.change', vp.memory.orientation.value);
+    };
 
-    $ps.subscribe('max.change', publishMinMaxToHeightWidth);
-    $ps.subscribe('max.parseerror', publishMinMaxToHeightWidth);
-
-    $ps.subscribe('orientation.change', function (aMsg, aData) {
-      if (vp.memory.orientation.value === 'portrait') {
-        vp.memory.height = vp.memory.max;
-        $ps.publish('height.change', vp.memory.max.value, true);
-        vp.memory.width = vp.memory.min;
-        $ps.publish('width.change', vp.memory.min.value, true);
-      } else {
-        vp.memory.height = vp.memory.min;
-        $ps.publish('height.change', vp.memory.min.value, true);
-        vp.memory.width = vp.memory.max;
-        $ps.publish('width.change', vp.memory.max.value, true);
-      }
-    });
+    $ps.subscribe('height.change', updateOrientation);
+    $ps.subscribe('width.change', updateOrientation);
   })();
 
 
@@ -377,8 +362,7 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
    */
 
   (function () {
-    var values = ['min', 'max', 'width', 'height'],
-        selectViewport,
+    var selectViewport,
         i;
 
     $win.addEventListener('load', function (aEvent) {
@@ -386,16 +370,29 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
     }, false);
 
     dom('#list').addEventListener('click', function (aEvent) {
+      var min,
+          max,
+          orientation;
+
       if (aEvent.target.classList.contains('orientation')) {
-        vp.memory.min.value = aEvent.target.dataset.sizeMin;
-        vp.memory.max.value = aEvent.target.dataset.sizeMax;
-        vp.memory.orientation.value = aEvent.target.dataset.orientation;
+        min = Number(aEvent.target.dataset.sizeMin);
+        max = Number(aEvent.target.dataset.sizeMax);
+        orientation = aEvent.target.dataset.orientation;
+
+        if (orientation === 'portrait') {
+          vp.memory.height.value = max;
+          vp.memory.width.value = min;
+        }
+        if (orientation === 'landscape') {
+          vp.memory.height.value = min;
+          vp.memory.width.value = max;
+        }
       }
     }, false);
 
     selectViewport = function (aMsg, aData) {
-      var min = vp.memory.min.value,
-          max = vp.memory.max.value,
+      var min = Math.min(vp.memory.height.value, vp.memory.width.value),
+          max = Math.max(vp.memory.height.value, vp.memory.width.value),
           currentSelection,
           newSelection;
 
@@ -410,9 +407,8 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
       }
     };
 
-    for (i = 0; i < values.length; i++) {
-      $ps.subscribe(values[i] + '.change', selectViewport);
-    }
+    $ps.subscribe('height.change', selectViewport);
+    $ps.subscribe('width.change', selectViewport);
   })();
 
 
@@ -634,7 +630,7 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
 
   (function () {
     var lastHash = $win.location.hash,
-        pattern = /^#[^=&]{1,2}=[^=&]*(&[^=&]{1,2}=[^=&]*)*$/,
+        pattern = /^#[^=&]=[^=&]*(&[^=&]=[^=&]*)*$/,
         shortToLong,
         shortName,
         parse,
@@ -644,9 +640,8 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
     shortToLong = {
       u: 'url',
       s: 'scale',
-      mi: 'min',
-      ma: 'max',
-      o: 'orientation',
+      h: 'height',
+      w: 'width',
       p: 'panel',
       c: 'controls',
       a: 'autoscale',
@@ -724,18 +719,17 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
    */
 
   (function () {
-    var values = ['url', 'min', 'max', 'orientation'],
+    var values = ['url', 'height', 'width'],
         processUpdates = true,
         update;
 
     update = function () {
       if (processUpdates) {
-        var min = vp.memory.min.value,
-            max = vp.memory.max.value,
-            orientation = vp.memory.orientation.value[0].toUpperCase(),
+        var width = vp.memory.width.value,
+            height = vp.memory.height.value,
             url = vp.memory.url.pattern.exec(vp.memory.url.value)[2];
 
-        $doc.title = min + '\u2a09' + max + ' (' + orientation + ') ' + url + ' - Viewports';
+        $doc.title = width + '\u2a09' + height + ' - ' + url + ' - Viewports';
       }
     };
 
@@ -825,6 +819,7 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
       },
 
       'F': function () {
+        vp.memory.hold.value = '0';
         vp.memory.filter.toggle();
       }
     };
@@ -937,7 +932,7 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
    */
 
   (function () {
-    var values = ['min', 'max', 'orientation', 'panel', 'controls'],
+    var values = ['height', 'width', 'panel', 'controls'],
         scale;
 
     scale = function (aEvent) {
