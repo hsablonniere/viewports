@@ -95,12 +95,12 @@
     </div>
     <div class="details">{{details}}</div>
     <div class="actions">
-      <a href="javascript:location.href='{{getRootUrl}}#u='+encodeURIComponent(location.href)+'&h={{size.min}}&w={{size.max}}'"
+      <a href="javascript:(function(){location.href='{{getRootUrl}}#u='+encodeURIComponent(location.href)+'&h={{size.min}}&w={{size.max}}'})()"
          class="button orientation" title="bookmarklet : load current site into Viewports with {{size.max}}⨉{{size.min}}"
          data-bookmarklet="only" data-size-min="{{size.min}}" data-size-max="{{size.max}}" data-orientation="landscape">
         <span class="bookmarkletText">VP {{size.max}}⨉{{size.min}}</span>
       </a>
-      <a href="javascript:location.href='{{getRootUrl}}#u='+encodeURIComponent(location.href)+'&h={{size.max}}&w={{size.min}}'"
+      <a href="javascript:(function(){location.href='{{getRootUrl}}#u='+encodeURIComponent(location.href)+'&h={{size.max}}&w={{size.min}}'})()"
          class="button orientation" title="bookmarklet : load current site into Viewports with {{size.min}}⨉{{size.max}}"
          data-bookmarklet="only" data-size-min="{{size.min}}" data-size-max="{{size.max}}" data-orientation="portrait">
         <span class="bookmarkletText">VP {{size.min}}⨉{{size.max}}</span>

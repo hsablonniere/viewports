@@ -995,7 +995,7 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
     }, false);
 
     $win.addEventListener('load', function (aEvent) {
-      dom('h1 a').href = 'javascript:location.href="' + vp.getRootUrl() + '#u="+encodeURIComponent(location.href)';
+      dom('h1 a').href = 'javascript:(function(){location.href="' + vp.getRootUrl() + '#u="+encodeURIComponent(location.href)})()';
     }, false);
   })();
 
