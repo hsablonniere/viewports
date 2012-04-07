@@ -5,7 +5,6 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
   'use strict';
 
   var dom,
-      toFixed1,
       protos,
       vp;
 
@@ -74,13 +73,6 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
       return key;
     };
   })();
-
-  /**
-   * Helper to format a number to only one digit after decimal point
-   */
-  toFixed1 = function (aValue) {
-    return Number(Number(aValue).toFixed(1));
-  };
 
   /**
    * Helper to push a value into an array only if it wasn't already in it
@@ -302,7 +294,9 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
       name: 'scale',
       defaultValue: 100,
       pattern: /^(([0-9]{1,3})(.([0-9]))?)%?$/,
-      converter: toFixed1,
+      converter: function (aValue) {
+        return Number(Number(aValue).toFixed(1));
+      },
       min: 10,
       max: 100
     }),
