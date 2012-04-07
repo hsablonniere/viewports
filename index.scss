@@ -220,9 +220,11 @@ a.button {
 .viewport {
   @include clearfix;
   padding: $gutter / 1.5 0;
+  margin: 0;
+  max-height: 300px;
   position: relative;
-  transition: none;
-  
+  transition-property: opacity, max-height, margin, border-width;
+
   &:not(:first-child) {
     border-top: 1px solid #FFF;
     box-shadow: 0 -1px 0 $light-grey;
@@ -318,32 +320,25 @@ a.button {
   @include button-toggled;
 }
 
+[data-filter="all"] .viewport[data-favourite="0"] {
+  transition-delay: $duration, 0, 0, 0;
+}
+
 [data-filter="favourites"] .viewport[data-favourite="0"] {
-  border: none;
-  box-shadow: none;
-  height: 0;
-  padding: 0px;
-}
-
-[data-filter="favourites"] .viewport[data-favourite="0"] > * {
-  visibility: hidden;
-}
-
-[data-filter="favourites"] .viewport[data-favourite="0"]:first-child,
-[data-filter="favourites"] .viewport[data-favourite="0"]:last-child {
-  padding: $gutter / 2;
+  margin-top: -$gutter / 0.75;
+  max-height: 0;
+  opacity: 0;
+  transition-delay: 0, $duration, $duration, $duration;
 }
 
 [data-filter="favourites"] .viewport[data-favourite="1"] {
-  border: none;
-  box-shadow: none;
-  margin-top: -10px;
+  border-top: 1px solid transparent;
+  box-shadow: 0 -1px 0 transparent;
 }
 
 [data-filter="favourites"] .viewport[data-favourite="1"] ~ .viewport[data-favourite="1"] {
   border-top: 1px solid #FFF !important;
   box-shadow: 0 -1px 0 $light-grey !important;
-  margin-top: 0 !important;
 }
 
 
