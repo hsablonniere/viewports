@@ -8,6 +8,9 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
       dom,
       keyNames,
       toFixed1,
+      arrayInsert,
+      arrayAfter,
+      arrayBefore,
       protos,
       vp;
 
@@ -71,6 +74,7 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
       }
 
       key += aEvent.shiftKey ? '+shift' : '';
+      key += aEvent.ctrlKey ? '+ctrl' : '';
 
       return key;
     };
@@ -81,6 +85,49 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
    */
   toFixed1 = function (aValue) {
     return Number(Number(aValue).toFixed(1));
+  };
+
+  /**
+   * Helper to insert values into an array only once
+   */
+  arrayInsert = function (aArray, aValue) {
+    if (aArray.indexOf(aValue) === -1) {
+      aArray.push(aValue);
+    }
+  };
+
+  /**
+   * Return the closest value after the current one
+   */
+  arrayAfter = function (aArray, aValue) {
+    if (aArray.length === 2) {
+      return aArray[1];
+    }
+
+    var middle = Math.floor(aArray.length / 2);
+
+    if (aValue < aArray[middle]) {
+      return arrayAfter(aArray.slice(0, middle + 1), aValue);
+    } else {
+      return arrayAfter(aArray.slice(middle, aArray.length), aValue);
+    }
+  };
+
+  /**
+   * Return the closest value before the current one
+   */
+  arrayBefore = function (aArray, aValue) {
+    if (aArray.length === 2) {
+      return aArray[0];
+    }
+
+    var middle = Math.floor(aArray.length / 2);
+
+    if (aValue <= aArray[middle]) {
+      return arrayBefore(aArray.slice(0, middle + 1), aValue);
+    } else {
+      return arrayBefore(aArray.slice(middle, aArray.length), aValue);
+    }
   };
 
   /**
@@ -365,8 +412,17 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
     var selectViewport,
         i;
 
+
     $win.addEventListener('load', function (aEvent) {
       dom('#list').innerHTML = $ich.listTemplate(vp);
+      vp.list.sizes = [];
+      for (i = 0; i < vp.list.items.length; i++) {
+        arrayInsert(vp.list.sizes, +vp.list.items[i].size.min);
+        arrayInsert(vp.list.sizes, +vp.list.items[i].size.max);
+      }
+      vp.list.sizes.sort(function (a, b) {
+        return a - b;
+      });
     }, false);
 
     dom('#list').addEventListener('click', function (aEvent) {
@@ -598,7 +654,9 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
     $win.addEventListener('mousemove', function (aEvent) {
       var min,
           max,
-          val;
+          val,
+          before,
+          after;
 
       if (firstAltEvent === null && aEvent.altKey) {
         firstAltEvent = aEvent;
@@ -615,7 +673,18 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
         val = Math.max(min, val);
         val = Math.min(val, max);
         val = vp.memory[handleTitle].converter(val);
-        vp.memory[handleTitle].value = val;
+
+        if (aEvent.ctrlKey) {
+          before = arrayBefore(vp.list.sizes, val);
+          after = arrayAfter(vp.list.sizes, val);
+          if (after - val > val - before) {
+            vp.memory[handleTitle].value = before;
+          } else {
+            vp.memory[handleTitle].value = after;
+          }
+        } else {
+          vp.memory[handleTitle].value = val;
+        }
       }
     }, false);
   })();
@@ -775,11 +844,17 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
       'up': function () {
         vp.memory.height.alter(1);
       },
+      'up+ctrl': function () {
+        vp.memory.height.value = arrayAfter(vp.list.sizes, vp.memory.height.value);
+      },
       'up+shift': function () {
         vp.memory.height.alter(10);
       },
       'down': function () {
         vp.memory.height.alter(-1);
+      },
+      'down+ctrl': function () {
+        vp.memory.height.value = arrayBefore(vp.list.sizes, vp.memory.height.value);
       },
       'down+shift': function () {
         vp.memory.height.alter(-10);
@@ -788,11 +863,17 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
       'right': function () {
         vp.memory.width.alter(1);
       },
+      'right+ctrl': function () {
+        vp.memory.width.value = arrayAfter(vp.list.sizes, vp.memory.width.value);
+      },
       'right+shift': function () {
         vp.memory.width.alter(10);
       },
       'left': function () {
         vp.memory.width.alter(-1);
+      },
+      'left+ctrl': function () {
+        vp.memory.width.value = arrayBefore(vp.list.sizes, vp.memory.width.value);
       },
       'left+shift': function () {
         vp.memory.width.alter(-10);
