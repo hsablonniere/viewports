@@ -1,16 +1,11 @@
 /*jshint forin:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, strict:true, undef:true, curly:true, browser:true, es5:true, indent:2, trailing:true scripturl:true */
-/*global PubSub:false, PrefixFree:false, ich:false */
+/*global PubSub:false, PrefixFree:false, ich:false, KeyboardEvent:false */
 
 var vp = (function ($win, $doc, $ps, $pf, $ich) {
   'use strict';
 
-  var extendObject,
-      dom,
-      keyNames,
+  var dom,
       toFixed1,
-      arrayInsert,
-      arrayAfter,
-      arrayBefore,
       protos,
       vp;
 
@@ -19,11 +14,11 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
    */
 
   /**
-   * Helper to extend object using Object.create but without having to specify
+   * Helper to Object.create but without having to specify
    * all the properties like value, writable, enumerable, configurable...
    */
-  extendObject = function (aProto, aExtensionObject) {
-    var newObject = Object.create(aProto),
+  Object.prototype.createSimple = function (aExtensionObject) {
+    var newObject = Object.create(this),
         property;
 
     for (property in aExtensionObject) {
@@ -52,9 +47,9 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
   })();
 
   /**
-   * Helper to translate keyCode into a human readable keyName
+   * Helper to translate a KeyboardEvent keyCode into a human readable keyName
    */
-  keyNames = (function () {
+  KeyboardEvent.prototype.keyName = (function () {
     var specialKeyCodes = {
       '38': 'up',
       '40': 'down',
@@ -64,17 +59,17 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
       '34': 'pagedown'
     };
 
-    return function (aEvent) {
+    return function () {
       var key = null;
 
-      if (specialKeyCodes.hasOwnProperty(aEvent.keyCode)) {
-        key = specialKeyCodes[aEvent.keyCode];
+      if (specialKeyCodes.hasOwnProperty(this.keyCode)) {
+        key = specialKeyCodes[this.keyCode];
       } else {
-        key = String.fromCharCode(aEvent.keyCode);
+        key = String.fromCharCode(this.keyCode);
       }
 
-      key += aEvent.shiftKey ? '+shift' : '';
-      key += aEvent.ctrlKey ? '+ctrl' : '';
+      key += this.shiftKey ? '+shift' : '';
+      key += this.ctrlKey ? '+ctrl' : '';
 
       return key;
     };
@@ -88,45 +83,45 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
   };
 
   /**
-   * Helper to insert values into an array only once
+   * Helper to push a value into an array only if it wasn't already in it
    */
-  arrayInsert = function (aArray, aValue) {
-    if (aArray.indexOf(aValue) === -1) {
-      aArray.push(aValue);
+  Array.prototype.pushOnce = function (aValue) {
+    if (this.indexOf(aValue) === -1) {
+      this.push(aValue);
     }
   };
 
   /**
-   * Return the closest value after the current one
+   * Return the closest value after the one specified
    */
-  arrayAfter = function (aArray, aValue) {
-    if (aArray.length === 2) {
-      return aArray[1];
+  Array.prototype.closestAfter = function (aValue) {
+    if (this.length === 2) {
+      return this[1];
     }
 
-    var middle = Math.floor(aArray.length / 2);
+    var middle = Math.floor(this.length / 2);
 
-    if (aValue < aArray[middle]) {
-      return arrayAfter(aArray.slice(0, middle + 1), aValue);
+    if (aValue < this[middle]) {
+      return this.slice(0, middle + 1).closestAfter(aValue);
     } else {
-      return arrayAfter(aArray.slice(middle, aArray.length), aValue);
+      return this.slice(middle, this.length).closestAfter(aValue);
     }
   };
 
   /**
-   * Return the closest value before the current one
+   * Return the closest value before the one specified
    */
-  arrayBefore = function (aArray, aValue) {
-    if (aArray.length === 2) {
-      return aArray[0];
+  Array.prototype.closestBefore = function (aValue) {
+    if (this.length === 2) {
+      return this[0];
     }
 
-    var middle = Math.floor(aArray.length / 2);
+    var middle = Math.floor(this.length / 2);
 
-    if (aValue <= aArray[middle]) {
-      return arrayBefore(aArray.slice(0, middle + 1), aValue);
+    if (aValue <= this[middle]) {
+      return this.slice(0, middle + 1).closestBefore(aValue);
     } else {
-      return arrayBefore(aArray.slice(middle, aArray.length), aValue);
+      return this.slice(middle, this.length).closestBefore(aValue);
     }
   };
 
@@ -219,7 +214,7 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
   /**
    * prototype to save and safely manipulate a number value using min and max
    */
-  protos.numericValue = extendObject(protos.value, {
+  protos.numericValue = protos.value.createSimple({
     defaultValue: 0,
     pattern: /^([0-9]+)$/,
     converter: Number,
@@ -245,7 +240,7 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
    * prototype to save and safely manipulate a dual value
    * ex: value can only be "sherlock" or "watson"
    */
-  protos.dualValue = extendObject(protos.value, {
+  protos.dualValue = protos.value.createSimple({
     pattern: null,
     defaultValue: '0',
     a: '0',
@@ -267,7 +262,7 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
   /**
    * specific prototype for dimension values in pixels
    */
-  protos.dimensionValue = extendObject(protos.numericValue, {
+  protos.dimensionValue = protos.numericValue.createSimple({
     pattern: /^([0-9]+)(?:px)?$/,
     converter: parseInt,
     min: 120,
@@ -297,13 +292,13 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
    */
 
   vp.memory = {
-    url: extendObject(protos.value, {
+    url: protos.value.createSimple({
       name: 'url',
       pattern: /^(https?:\/\/(.*?)(?::[0-9]{1,5})?(?:\/.*)?)?$/,
       defaultValue: vp.getRootUrl() + 'help/'
     }),
 
-    scale: extendObject(protos.numericValue, {
+    scale: protos.numericValue.createSimple({
       name: 'scale',
       defaultValue: 100,
       pattern: /^(([0-9]{1,3})(.([0-9]))?)%?$/,
@@ -312,39 +307,39 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
       max: 100
     }),
 
-    height: extendObject(protos.dimensionValue, {
+    height: protos.dimensionValue.createSimple({
       name: 'height',
       defaultValue: 480
     }),
 
-    width: extendObject(protos.dimensionValue, {
+    width: protos.dimensionValue.createSimple({
       name: 'width',
       defaultValue: 320
     }),
 
-    panel: extendObject(protos.dualValue, {
+    panel: protos.dualValue.createSimple({
       name: 'panel',
       defaultValue: '1'
     }),
 
-    controls: extendObject(protos.dualValue, {
+    controls: protos.dualValue.createSimple({
       name: 'controls',
       defaultValue: '1'
     }),
 
-    autoscale: extendObject(protos.dualValue, {
+    autoscale: protos.dualValue.createSimple({
       name: 'autoscale',
       defaultValue: '1'
     }),
 
-    filter: extendObject(protos.dualValue, {
+    filter: protos.dualValue.createSimple({
       name: 'filter',
       defaultValue: 'favourites',
       a: 'all',
       b: 'favourites'
     }),
 
-    hold: extendObject(protos.dualValue, {
+    hold: protos.dualValue.createSimple({
       name: 'hold',
       defaultValue: '0'
     })
@@ -417,8 +412,8 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
       dom('#list').innerHTML = $ich.listTemplate(vp);
       vp.list.sizes = [];
       for (i = 0; i < vp.list.items.length; i++) {
-        arrayInsert(vp.list.sizes, +vp.list.items[i].size.min);
-        arrayInsert(vp.list.sizes, +vp.list.items[i].size.max);
+        vp.list.sizes.pushOnce(+vp.list.items[i].size.min);
+        vp.list.sizes.pushOnce(+vp.list.items[i].size.max);
       }
       vp.list.sizes.sort(function (a, b) {
         return a - b;
@@ -675,8 +670,8 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
         val = vp.memory[handleTitle].converter(val);
 
         if (aEvent.ctrlKey) {
-          before = arrayBefore(vp.list.sizes, val);
-          after = arrayAfter(vp.list.sizes, val);
+          before = vp.list.sizes.closestBefore(val);
+          after = vp.list.sizes.closestAfter(val);
           if (after - val > val - before) {
             vp.memory[handleTitle].value = before;
           } else {
@@ -845,7 +840,7 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
         vp.memory.height.alter(1);
       },
       'up+ctrl': function () {
-        vp.memory.height.value = arrayAfter(vp.list.sizes, vp.memory.height.value);
+        vp.memory.height.value = vp.list.sizes.closestAfter(vp.memory.height.value);
       },
       'up+shift': function () {
         vp.memory.height.alter(10);
@@ -854,7 +849,7 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
         vp.memory.height.alter(-1);
       },
       'down+ctrl': function () {
-        vp.memory.height.value = arrayBefore(vp.list.sizes, vp.memory.height.value);
+        vp.memory.height.value = vp.list.sizes.closestBefore(vp.memory.height.value);
       },
       'down+shift': function () {
         vp.memory.height.alter(-10);
@@ -864,7 +859,7 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
         vp.memory.width.alter(1);
       },
       'right+ctrl': function () {
-        vp.memory.width.value = arrayAfter(vp.list.sizes, vp.memory.width.value);
+        vp.memory.width.value = vp.list.sizes.closestAfter(vp.memory.width.value);
       },
       'right+shift': function () {
         vp.memory.width.alter(10);
@@ -873,7 +868,7 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
         vp.memory.width.alter(-1);
       },
       'left+ctrl': function () {
-        vp.memory.width.value = arrayBefore(vp.list.sizes, vp.memory.width.value);
+        vp.memory.width.value = vp.list.sizes.closestBefore(vp.memory.width.value);
       },
       'left+shift': function () {
         vp.memory.width.alter(-10);
@@ -912,7 +907,7 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
 
       vp.memory.hold.value = '1';
 
-      var keyCombination = keyNames(aEvent);
+      var keyCombination = aEvent.keyName();
 
       if (listeners[keyCombination] !== undefined) {
         listeners[keyCombination]();
@@ -921,7 +916,7 @@ var vp = (function ($win, $doc, $ps, $pf, $ich) {
     }, false);
 
     $win.addEventListener('keyup', function (aEvent) {
-      var keyCombination = keyNames(aEvent);
+      var keyCombination = aEvent.keyName();
 
       if (listeners[keyCombination] !== undefined) {
         vp.memory.hold.value = '0';
