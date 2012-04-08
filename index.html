@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <title>Viewports</title>
-  <link rel="stylesheet" type="text/css" href="index.css">
-  <script type="text/javascript" src="lib/prefixfree.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="styles/dist/index.css">
+  <script type="text/javascript" src="scripts/lib/prefixfree.min.js"></script>
 </head>
 <body data-orientation="portrait" data-panel="1" data-controls="1" data-autoscale="1" data-filter="all"
       data-no-select="0" data-hold="0">
@@ -81,9 +81,6 @@
   </div>
 </div>
 
-<script type="text/javascript" src="lib/PubSubJS.min.js"></script>
-<script type="text/javascript" src="lib/ICanHaz.min.js"></script>
-
 <script id="listTemplate" type="text/html">
   {{#list.items}}
   <div class="viewport" data-favourite="{{favourite}}" data-size-min="{{size.min}}" data-size-max="{{size.max}}">
@@ -110,7 +107,6 @@
   {{/list.items}}
 </script>
 
-<script type="text/javascript" src="viewports.js"></script>
-<script type="text/javascript" src="viewports-list.js"></script>
+<script type="text/javascript" src="scripts/dist/index.js"></script>
 </body>
 </html>

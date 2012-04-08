@@ -1,4 +1,4 @@
-vp.list = {
+$viewports.list.load({
   VERSION: '0.1.0',
   items: [{
     name: 'QQVGA',
@@ -257,4 +257,4 @@ vp.list = {
     details: '',
     favourite: '0'
   }]
-};
+});
