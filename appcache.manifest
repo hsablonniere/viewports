@@ -1,0 +1,15 @@
+CACHE MANIFEST
+# 0.9.1
+
+CACHE:
+img/chruch.png
+
+scripts/dist/index.js
+scripts/lib/prefixfree.min.js
+scripts/lib/PubSubJS.min.js
+scripts/lib/ICanHaz.min.js
+
+styles/dist/index.css
+styles/dist/help.css
+
+help.html
