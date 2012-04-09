@@ -6,7 +6,7 @@ SCRIPTS_DIR = scripts
 STYLES_DIR = styles
 
 # MEJL : Mother Effing JavaScript Loader : https://gist.github.com/2338480
-MEJL_BEGIN = '(function(a,b,c,d){with(document)for(d=0;a[d];)c=body.appendChild(createElement("script")),c.async=b,c.src=a[d++]})(['
+MEJL_BEGIN = '(function(a,b,c){with(document)for(;(c=createElement("script")).src=a.shift();body.appendChild(c))c.async=b})(['
 MEJL_END = '],false)'
 
 INDEX_JS = ${SCRIPTS_DIR}/${DIST_DIR}/index.js
