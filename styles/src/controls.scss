@@ -1,0 +1,180 @@
+/**
+ * Viewports : controls
+ */
+
+@import "base";
+
+.control {
+  border: none;
+  border-radius: 0 0 $gutter / 2 $gutter / 2;
+  box-shadow: $box-shadow;
+  height: $control-height;
+  position: fixed;
+  top: 0;
+}
+
+a.control,
+button.control {
+  @include button;
+  color: $dark-grey;
+  cursor: pointer;
+  line-height: $control-height;
+  padding: 0;
+  text-align: center;
+  text-decoration: none;
+  text-shadow: 0 1px 0 #FFF;
+  width: $button-width;
+  
+      
+  &:hover {
+    color: #555;
+    background-color: #EFEFEF;
+    background-image: linear-gradient(#E0E0E0, #FFF);
+  }
+}
+
+#orientation-landscape {
+  left: $gutter * 2 + $button-width;
+  width: $button-width-orientation-landscape;
+  
+  [data-controls="0"] & {
+    top: 0 - $control-height - $gutter;
+  }
+  
+  [data-panel="1"] & {
+    top: 0 - $control-height - $gutter;
+  }
+
+  [data-orientation="landscape"] & {
+    @include button-toggled;
+  }
+}
+
+#orientation-portrait {
+  left: $gutter * 3 + $button-width + $button-width-orientation-landscape;
+  width: $button-width-orientation-portrait;
+  
+  [data-controls="0"] & {
+    top: 0 - $control-height - $gutter;
+  }
+  
+  [data-panel="1"][data-controls="0"] & {
+    left: $split;
+  }
+  
+  [data-panel="1"] & {
+    top: 0 - $control-height - $gutter;
+  }
+
+  [data-orientation="portrait"] & {
+    @include button-toggled;
+  }
+}
+
+#panel-switch,
+#controls-switch {
+  transform-origin: 0 0;
+  
+  [data-controls="0"] & {
+    border-radius: 0 0 $border-radius $border-radius;
+    left: 0;
+    opacity: 0.75;
+    transform: rotate(-90deg);
+  }
+}
+
+#panel-switch {
+  width: $button-width-panel;
+  
+  [data-controls="1"] & {
+    left: $split + $gutter;
+  }
+  
+  [data-controls="0"] & {
+    top: $gutter * 3 + $button-width + $button-width-controls + $button-width-panel;
+  }
+  
+  [data-panel="1"] & [data-status="0"] {
+      display: none;
+  }
+  
+  [data-panel="0"] & [data-status="1"] {
+      display: none;
+  }
+  
+  [data-panel="1"][data-controls="0"] & {
+    left: $split;
+  }
+}
+
+#controls-switch {
+  width: $button-width-controls;
+  
+  [data-controls="1"] & {
+    left: $split + $gutter * 2 + $button-width-panel;
+    
+    [data-status="0"] {
+        display: none;
+    }
+  }
+  
+  [data-controls="0"] & {
+    top: $gutter * 2 + $button-width + $button-width-controls;
+    
+    [data-status="1"] {
+        display: none;
+    }
+  }
+  
+  [data-panel="1"][data-controls="0"] & {
+    left: $split;
+  }
+}
+
+#url {
+  left: $split + $gutter * 3 + $button-width-panel + $button-width-controls;
+  right: $gutter * 3 + $button-width-help + $button-width-scale;
+  
+  [data-controls="0"] & {
+    top: 0 - $control-height - $gutter;
+  }
+  
+  &.focused {
+    right: $gutter;
+  }
+  
+  input {
+    border: none;
+    border-radius: 0 0 $gutter / 2 $gutter / 2;
+    color: $dark-grey;
+    height: 100%;
+    padding: 0 $gutter / 2;
+    width: 100%;
+  }
+  
+  input:focus {
+    color: $darker-grey;
+  }
+}
+
+#autoscale-switch {
+  right: $gutter * 2 + $button-width-help;
+  width: $button-width-scale;
+  
+  [data-controls="0"] & {
+    top: 0 - $control-height - $gutter;
+  }
+
+  [data-autoscale="1"] & {
+    @include button-toggled;
+  }
+}
+
+#help-link {
+  right: $gutter;
+  width: $button-width-help;
+  
+  [data-controls="0"] & {
+    top: 0 - $control-height - $gutter;
+  }
+}

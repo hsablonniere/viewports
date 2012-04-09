@@ -1,0 +1,39 @@
+/**
+ * Viewports : sad-face
+ */
+
+@import "base";
+
+#sad-face {
+  background: #FFF;
+  bottom: 0;
+  color: $blue;
+  display: none;
+  left: 0;
+  position: fixed;
+  right: 0;
+  text-align: center;
+  top: 0;
+  
+  .message {
+    font-size: 28px;
+    height: 136px;
+    left: 0;
+    line-height: 34px;
+    margin-top: -72px;
+    position: absolute;
+    right: 0;
+    top: 50%;
+  }
+  
+  .min-size {
+    color: $darker-grey;
+  }
+}
+
+@media screen and (max-height: 349px),
+screen and (max-width: 799px) {
+  #sad-face {
+    display: block;
+  }
+}

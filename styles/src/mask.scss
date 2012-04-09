@@ -1,0 +1,31 @@
+/**
+ * Viewports : mask
+ */
+
+#mask {
+  bottom: 0;
+  left: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
+  
+  &.scale-resize, &.height-resize {
+    cursor: ns-resize;
+  }
+  
+  &.width-resize {
+    cursor: ew-resize;
+  }
+  
+  [data-hold="1"] & {
+    display: block;
+  }
+  
+  [data-hold="0"] & {
+    display: none;
+  }
+}
+
+[data-hold="1"] * {
+  user-select: none;
+}

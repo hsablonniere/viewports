@@ -1,0 +1,95 @@
+/**
+ * Viewports : global
+ */
+
+@import "base";
+
+[data-tpl-all] {
+  display: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+[data-hold="0"] * {
+  box-sizing: border-box;
+  transition-property: top, left, bottom, right, opacity, transform, color;
+  transition-duration: $duration;
+  transition-timing-function: $timing-function;
+}
+
+body, input, button {
+  font: bold $font-size Arial, sans-serif;
+}
+
+:focus {
+  outline: none;
+}
+
+button::-moz-focus-inner,
+input[type="reset"]::-moz-focus-inner,
+input[type="button"]::-moz-focus-inner,
+input[type="submit"]::-moz-focus-inner,
+input[type="file"] > input[type="button"]::-moz-focus-inner {
+  border: none;
+}
+
+h1 {
+  font-size: $font-size * 1.5;
+  line-height: $control-height;
+  left: $gutter;
+  margin: 0;
+  position: fixed;
+  top: 0;
+  transform-origin: 0 0;
+  width: $button-width;
+
+  [data-panel="0"][data-controls="0"] & {
+    left: 0;
+    text-align: center;
+    top: $gutter + $button-width;
+    transform: rotate(-90deg);
+  }
+
+  a {
+    text-decoration: none;
+
+    [data-panel="1"] & {
+      color: $blue;
+      text-shadow: 0 1px 0 #FFF;
+    }
+
+    [data-panel="0"][data-controls="1"] & {
+      color: #FFF;
+      text-shadow: 1px 1px 0 #000;
+    }
+
+    [data-panel="0"][data-controls="0"] & {
+      color: $blue;
+    }
+  }
+}
+
+button,
+a.button {
+  @include button;
+  border: 1px solid $light-grey;
+  border-radius: $border-radius-mini;
+  box-shadow: 0 0 5px -2px #000 inset, 0 1px 0 #FFF;
+  color: $dark-grey;
+  cursor: pointer;
+  line-height: $font-size * 1.5;
+  padding: 0 $gutter;
+  text-align: center;
+  text-decoration: none;
+  text-shadow: 0 1px 0 white;
+}
+
+#panel,
+#playground,
+#mask {
+  bottom: 0;
+  position: fixed;
+  top: 0;
+}

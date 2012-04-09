@@ -1,0 +1,31 @@
+@import "base";
+
+/* animations ----------------------------------------------------------------------------------- */
+
+@keyframes 'rotate-landscape' {
+  from {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(90deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}​
+
+.keyframes-bug{}
+
+@keyframes 'rotate-portrait' {
+  from {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(-90deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}​
+
+.keyframes-bug{}

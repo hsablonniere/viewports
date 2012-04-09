@@ -1,0 +1,101 @@
+/**
+ * Viewports : cursors-specific
+ */
+
+@import "base";
+@import "compass/utilities/general/clearfix";
+
+#scale,
+#height {
+  bottom: $gutter + $cursor-height + $cursor-height / 2;
+  top: $gutter + $control-height + $cursor-height / 2;
+  width: $cursor-width;
+  
+  .cursor {
+    bottom: 0;
+    margin-bottom: 0 - $cursor-height / 2;
+    
+    &:before {
+      content: '\25B6';
+    }
+    
+    .handle {
+      cursor: ns-resize;
+    }
+  }
+}
+
+#scale {
+  left: 0;
+  
+  .cursor {
+    border-radius: 0 $border-radius $border-radius 0;
+    bottom: 50%;
+    
+    input {
+      border-radius: 0 $border-radius-mini $border-radius-mini 0;
+    }
+    
+    &:before {
+      left: $cursor-handle-width + $cursor-gutter;
+    }
+    
+    [data-autoscale="1"] & .handle {
+      visibility: hidden;
+    }
+    
+    [data-autoscale="1"] & {
+      opacity: 0.5;
+    }
+  }
+}
+
+#height {
+  right: 0;
+  
+  .cursor {
+    border-radius: $border-radius 0 0 $border-radius;
+    bottom: 50%;
+    
+    input {
+      border-radius: $border-radius-mini 0 0 $border-radius-mini;
+    }
+    
+    &:before {
+      left: 0;
+    }
+  }
+}
+
+#width {
+  bottom: 0;
+  height: $cursor-height;
+  left: $gutter + $cursor-width / 2;
+  right: $gutter + $cursor-width / 2;
+  
+  .cursor {
+    border-radius: $border-radius $border-radius 0 0;
+    left: 50%;
+    margin-left: 0 - $cursor-width / 2;
+    
+    input {
+      border-radius: $border-radius-mini $border-radius-mini 0 0;
+    }
+    
+    &:before {
+      bottom: 0;
+      content: '\25B2';
+      color: #DDD;
+      left: $cursor-gutter / 2;
+      line-height: $control-height / 2;
+      margin-bottom: 0;
+      text-align: center;
+      width: $cursor-input-width;
+    }
+    
+    .handle {
+      cursor: ew-resize;
+      transform: rotate(-90deg);
+    }
+  }
+}

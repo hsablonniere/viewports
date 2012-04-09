@@ -1,0 +1,56 @@
+/**
+ * Viewports : cursors
+ */
+
+@import "base";
+
+.cursor-area {
+  position: absolute;
+  
+  [data-controls="0"] & {
+    opacity: 0;
+  }
+}
+
+.cursor {
+  @include simple-button;
+  bottom: 0;
+  box-shadow: $box-shadow;
+  height: $cursor-height;
+  padding: $cursor-gutter / 2;
+  position: absolute;
+  width: $cursor-width;
+  
+  &:before {
+    color: #EFEFEF;
+    text-shadow: none;
+    margin: $cursor-gutter / 2;
+    position: absolute;
+    line-height: $control-height;
+  }
+}
+
+.cursor input,
+.cursor .handle {
+  float: left;
+  height: $control-height;
+}
+
+.cursor input {
+  @include blueprint-background;
+  border: none;
+  box-shadow: $box-shadow inset;
+  color: #FFF;
+  margin: $cursor-gutter / 2;
+  padding: $cursor-gutter / 2;
+  text-align: right;
+  text-shadow: 1px 1px 0 #000;
+  width: $cursor-input-width;
+}
+
+.cursor .handle {
+  @include handle-background;
+  height: $cursor-height - $cursor-gutter * 3;
+  margin: $cursor-gutter $cursor-gutter / 2;
+  width: $cursor-height / 2;
+}

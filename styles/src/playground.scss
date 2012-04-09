@@ -1,0 +1,27 @@
+/**
+ * Viewports : playground
+ */
+
+@import "base";
+
+#playground {
+  box-shadow: $box-shadow;
+  overflow: hidden;
+  right: 0;
+  
+  [data-panel="1"] & {
+    left: $split;
+  }
+  
+  [data-panel="0"] & {
+    left: 0;
+  }
+  
+  [data-controls="1"] & {
+    @include blueprint-background;
+  }
+  
+  [data-controls="0"] & {
+    background: #FFF;
+  }
+}

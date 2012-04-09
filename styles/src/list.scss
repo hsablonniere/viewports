@@ -1,0 +1,163 @@
+/**
+ * Viewports : list
+ */
+
+@import "base";
+@import "compass/utilities/general/clearfix";
+
+#panel {
+  /* http://subtlepatterns.com/?p=1064 */
+  background: url(../../img/chruch.png);
+  left: 0;
+  width: $split;
+}
+
+#list {
+  bottom: $font-size * 2 + $gutter;
+  box-shadow: 0 5px 30px -10px #555555 inset,
+    0 -5px 30px -10px #555555 inset;
+  left: 0;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  padding: 0 $gutter 0 $gutter;
+  position: absolute;
+  right: 0;
+  top: $font-size * 2 + $gutter;
+  
+  &::-webkit-scrollbar {
+    width: $gutter / 2;
+}
+
+  &::-webkit-scrollbar-track {
+    border-radius: $gutter;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: $gutter;
+    background: $light-grey;
+  }
+}
+
+.viewport {
+  @include clearfix;
+  padding: $gutter / 1.5 0;
+  margin: 0;
+  max-height: 300px;
+  position: relative;
+  transition-property: opacity, max-height, margin, border-width;
+
+  &:not(:first-child) {
+    border-top: 1px solid #FFF;
+    box-shadow: 0 -1px 0 $light-grey;
+  }
+  
+  .favourite,
+  .name,
+  .size,
+  .details {
+    line-height: $font-size * 1.5;
+    margin: $gutter / 3 0;
+  }
+  
+  .favourite {
+    background: none;
+    border: none;
+    box-shadow: none;
+    cursor: pointer;
+    float: left;
+    margin-right: $gutter / 2;
+    padding: 0;
+    text-shadow: 0 0 $gutter / 3 $dark-grey;
+    transition: none;
+  }
+  
+  &[data-favourite="1"] .favourite {
+    color: #FF0;
+  }
+  
+  &[data-favourite="0"] .favourite {
+    color: $panel-bg-color;
+  }
+  
+  .name,
+  .size {
+    float: left;
+    padding: 1px 0;
+  }
+  
+  .name {
+    text-shadow: 0 1px 0 #FFF;
+    text-overflow: ellipsis;
+    transition: none;
+    white-space: nowrap;
+    width: 150px;
+  }
+  
+  &[data-favourite="1"] .name {
+    color: $blue;
+  }
+  
+  &[data-favourite="0"] .name {
+    color: $darker-grey;
+  }
+
+  .size {
+    clear: left;
+    color: $darker-grey;
+    font-weight: normal;
+  }
+
+  .details {
+    clear: left;
+    color: $dark-grey;
+    float: left;
+    font-weight: normal;
+    margin-top: $gutter;
+  }
+
+  .actions {
+    position: absolute;
+    right: 0;
+    top: $gutter / 1.5;
+  }
+
+  .actions .orientation {
+    display: block;
+    margin: 3px 0;
+    width: $button-width-orientation-landscape;
+  }
+
+  .actions .orientation:after {
+    content: attr(data-orientation);
+  }
+
+  .bookmarkletText {
+    display: none;
+  }
+}
+
+[data-orientation="portrait"] .viewport[data-selected="1"] [data-orientation="portrait"],
+[data-orientation="landscape"] .viewport[data-selected="1"] [data-orientation="landscape"] {
+  @include button-toggled;
+}
+
+[data-filter="all"] .viewport[data-favourite="0"] {
+  transition-delay: $duration, 0, 0, 0;
+}
+
+[data-filter="favourites"] .viewport[data-favourite="0"] {
+  margin-top: -$gutter / 0.75;
+  max-height: 0;
+  opacity: 0;
+  transition-delay: 0, $duration, $duration, $duration;
+}
+
+[data-filter="favourites"] .viewport[data-favourite="1"] {
+  border-top: 1px solid transparent;
+  box-shadow: 0 -1px 0 transparent;
+}
+
+[data-filter="favourites"] .viewport[data-favourite="1"] ~ .viewport[data-favourite="1"] {
+  border-top: 1px solid #FFF !important;
+  box-shadow: 0 -1px 0 $light-grey !important;
+}

@@ -1,0 +1,81 @@
+$font-size: 14px;
+$split: 300px;
+$gutter: 10px;
+$border-radius: $gutter / 2;
+$border-radius-mini: $gutter / 3;
+
+$duration: 250ms;
+$timing-function: ease-in-out;
+
+$button-width: 110px;
+$button-width-panel: 90px;
+$button-width-controls: 110px;
+$button-width-scale: 90px;
+$button-width-help: 50px;
+$button-width-orientation-landscape: 90px;
+$button-width-orientation-portrait: 70px;
+
+$control-height: $font-size * 2;
+
+$cursor-gutter: 6px;
+$cursor-input-width: 66px;
+$cursor-handle-width: 20px;
+$cursor-height: $control-height + $cursor-gutter * 2;
+$cursor-width: $cursor-input-width + $cursor-handle-width + $cursor-gutter * 3;
+
+$box-shadow: 0 0 10px #222;
+
+$blue: #269;
+$light-grey: #AAA;
+$dark-grey: #777;
+$darker-grey: #333;
+$panel-bg-color: #E5E5E5;
+
+@mixin blueprint-background {
+  background-attachment: fixed;
+  background-color: $blue;
+  background-image: linear-gradient(rgba(255,255,255,.15) 2px, transparent 2px),
+    linear-gradient(0, rgba(255,255,255,.15) 2px, transparent 2px),
+    linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px),
+    linear-gradient(0, rgba(255,255,255,.1) 1px, transparent 1px);
+  background-position: -2px -2px,
+    -2px -2px,
+    -1px -1px,
+    -1px -1px;
+  background-size: 100px 100px,
+    100px 100px,
+    20px 20px,
+    20px 20px;
+}
+@mixin handle-background {
+  background-image: linear-gradient(#AAA 1px, transparent 1px),
+    linear-gradient(#FFF 1px, transparent 1px);
+  background-position: 0 1px, 0 2px;
+  background-size: 6px 6px;
+}
+@mixin simple-button {
+  background-color: #EEE;
+  background-image: linear-gradient(#FFF, #DDD);
+  color: $dark-grey;
+  text-shadow: 0 1px 0 #FFF;
+}
+@mixin button {
+  @include simple-button;
+
+  &:hover {
+    background-color: #EEE;
+    background-image: linear-gradient(#DDD, #FFF);
+  }
+}
+@mixin button-toggled {
+  background-color: #808000;
+  background-image: linear-gradient(#DAA658, #996A22);
+  border-color: #575700;
+  color: #FFF;
+  text-shadow: 0 -1px 0 $dark-grey;
+
+  &:hover {
+    background-color: #808000;
+    background-image: linear-gradient(#996A22, #DAA658);
+  }
+}

@@ -1,0 +1,20 @@
+/**
+ * Viewports : filter
+ */
+
+@import "base";
+
+#filter {
+  bottom: 0;
+  height: 38px;
+  left: 0;
+  line-height: 38px;
+  position: absolute;
+  right: 0;
+  text-align: center;
+}
+  
+[data-filter="all"] #filter-all,
+[data-filter="favourites"] #filter-favourites {
+  @include button-toggled;
+}
