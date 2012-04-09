@@ -18,7 +18,7 @@
 
   $ps.subscribe('scale.change', function (aMsg, aData) {
     aData = (aData / 100).toFixed(3);
-    $dqs('#viewport-wrapper').style.setProperty($pf.prefix + 'transform', 'scale(' + aData + ')', '');
+    $dqs('#viewport-wrapper').style.setProperty($pf.prefixProperty('transform'), 'scale(' + aData + ')', '');
   });
 
   $ps.subscribe('height.change', function (aMsg, aData) {
