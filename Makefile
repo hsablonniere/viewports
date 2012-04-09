@@ -73,5 +73,5 @@ clean:
 	@echo Cleaning project
 	@echo ---------------------------------
 	@echo
-	@rm -rf ${SCRIPTS_DIR/${DIST_DIR}
-	@rm -rf ${STYLES_DIR/${DIST_DIR}
+	@rm -rf ${SCRIPTS_DIR}/${DIST_DIR}
+	@rm -rf ${STYLES_DIR}/${DIST_DIR}
