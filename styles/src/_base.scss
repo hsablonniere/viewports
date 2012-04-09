@@ -31,6 +31,7 @@ $dark-grey: #777;
 $darker-grey: #333;
 $panel-bg-color: #E5E5E5;
 
+/* http://lea.verou.me/css3patterns/#blueprint-grid */
 @mixin blueprint-background {
   background-attachment: fixed;
   background-color: $blue;
