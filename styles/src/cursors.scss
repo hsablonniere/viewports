@@ -20,13 +20,13 @@
   padding: $cursor-gutter / 2;
   position: absolute;
   width: $cursor-width;
-  
-  &:before {
+
+  &:before, &:after {
     color: #EFEFEF;
-    text-shadow: none;
+    line-height: $control-height;
     margin: $cursor-gutter / 2;
     position: absolute;
-    line-height: $control-height;
+    text-shadow: none;
   }
 }
 

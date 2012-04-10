@@ -15,10 +15,6 @@
     bottom: 0;
     margin-bottom: 0 - $cursor-height / 2;
     
-    &:before {
-      content: '\25B6';
-    }
-    
     .handle {
       cursor: ns-resize;
     }
@@ -34,10 +30,6 @@
     
     input {
       border-radius: 0 $border-radius-mini $border-radius-mini 0;
-    }
-    
-    &:before {
-      left: $cursor-handle-width + $cursor-gutter;
     }
     
     [data-autoscale="1"] & .handle {
@@ -60,9 +52,27 @@
     input {
       border-radius: $border-radius-mini 0 0 $border-radius-mini;
     }
-    
+
+    &:before,
+    &:after {
+      left: $cursor-gutter / 2;
+      line-height: $control-height / 2;
+      text-align: center;
+      width: $cursor-input-width;
+    }
+
     &:before {
-      left: 0;
+      content: '\25BC';
+      color: #FFF;
+      margin-top: -1px;
+      top: 0;
+    }
+
+    &:after {
+      bottom: 0;
+      content: '\25B2';
+      color: #DDD;
+      margin-bottom: -1px;
     }
   }
 }
@@ -77,20 +87,23 @@
     border-radius: $border-radius $border-radius 0 0;
     left: 50%;
     margin-left: 0 - $cursor-width / 2;
+    width: $cursor-width + 6px;
     
     input {
       border-radius: $border-radius-mini $border-radius-mini 0 0;
+      padding-left: 8px;
+      padding-right: 8px;
+      width: $cursor-input-width + 6px;
     }
-    
+
     &:before {
-      bottom: 0;
-      content: '\25B2';
-      color: #DDD;
-      left: $cursor-gutter / 2;
-      line-height: $control-height / 2;
-      margin-bottom: 0;
-      text-align: center;
-      width: $cursor-input-width;
+      content: '\25B6';
+      left: -3px;
+    }
+
+    &:after {
+      content: '\25C0';
+      right: $cursor-handle-width + $cursor-gutter - 3px;
     }
     
     .handle {
