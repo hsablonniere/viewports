@@ -41,6 +41,7 @@ dev:
 	@echo Building ${INDEX_JS} for dev mode
 	@echo ---------------------------------
 	@echo
+	@mkdir -p ${SCRIPTS_DIR}/${DIST_DIR}
 	@echo ${MEJL_BEGIN} > ${INDEX_JS}
 	@for file in ${INDEX_JS_FILES} ; do \
 		echo Adding $$file; \
@@ -60,6 +61,7 @@ prod:
 	@echo Building ${INDEX_JS} for prod mode
 	@echo ---------------------------------
 	@echo
+	@mkdir -p ${SCRIPTS_DIR}/${DIST_DIR}
 	@rm ${INDEX_JS}
 	@touch ${INDEX_JS}
 	@for file in ${INDEX_JS_FILES} ; do \
