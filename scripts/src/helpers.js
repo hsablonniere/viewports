@@ -82,9 +82,14 @@
   };
 
   /**
-   * Return the closest value after the one specified
+   * If the value is in the array, return the array
+   * If not return the closest value after the one provided
    */
   Array.prototype.closestAfter = function (aValue) {
+    if (this.indexOf(aValue) !== -1) {
+      return aValue;
+    }
+
     if (this.length === 2) {
       return this[1];
     }
@@ -99,9 +104,14 @@
   };
 
   /**
-   * Return the closest value before the one specified
+   * If the value is in the array, return the array
+   * If not return the closest value beofre the one provided
    */
   Array.prototype.closestBefore = function (aValue) {
+    if (this.indexOf(aValue) !== -1) {
+      return aValue;
+    }
+
     if (this.length === 2) {
       return this[0];
     }
