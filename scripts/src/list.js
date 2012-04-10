@@ -18,13 +18,11 @@
       i;
 
   list = $vp.list = {
-    sizes: [],
-    load: function (aList) {
-      this.items = aList.items;
-    }
+    sizes: []
   };
 
-  $win.addEventListener('load', function (aEvent) {
+  $ps.subscribe('list.load', function (aMsg, aData) {
+    list.items = aData.items;
     if (!$ich.listTemplate) {
       $ich.refresh();
     }
@@ -37,7 +35,7 @@
     list.sizes.sort(function (a, b) {
       return a - b;
     });
-  }, false);
+  });
 
   $dqs('#list').addEventListener('click', function (aEvent) {
     var min,
