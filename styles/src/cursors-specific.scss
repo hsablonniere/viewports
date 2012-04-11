@@ -80,8 +80,8 @@
 #width {
   bottom: 0;
   height: $cursor-height;
-  left: $gutter + $cursor-width / 2;
-  right: $gutter + $cursor-width / 2;
+  left: $gutter + ($cursor-width + 6px) / 2;
+  right: $gutter + ($cursor-width + 6px) / 2;
   
   .cursor {
     border-radius: $border-radius $border-radius 0 0;
