@@ -65,7 +65,32 @@
     hold: $protos.dualValue.createSimple({
       name: 'hold',
       defaultValue: '0'
-    })
+    }),
+
+    orientation: {
+      name: 'orientation',
+      a: 'portrait',
+      b: 'landscape',
+
+      set value(aValue) {
+        if (this.value === this.a && aValue === this.b ||
+            this.value === this.b && aValue === this.a) {
+          this.toggle();
+        }
+      },
+
+      get value() {
+        return mem.height.value > mem.width.value ? this.a : this.b;
+      },
+
+      toggle: function () {
+        var height = mem.height.value,
+            width = mem.width.value;
+
+        mem.height.value = width;
+        mem.width.value = height;
+      }
+    }
   };
 
   $win.addEventListener('load', function (aEvent) {
