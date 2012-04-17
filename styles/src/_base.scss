@@ -26,6 +26,8 @@ $cursor-width: $cursor-input-width + $cursor-handle-width + $cursor-gutter * 3;
 $box-shadow: 0 0 10px #222;
 
 $blue: #269;
+$light-green: #DAA658;
+$dark-green: #996A22;
 $light-grey: #AAA;
 $dark-grey: #777;
 $darker-grey: #333;
@@ -70,13 +72,13 @@ $panel-bg-color: #E5E5E5;
 }
 @mixin button-toggled {
   background-color: #808000;
-  background-image: linear-gradient(#DAA658, #996A22);
+  background-image: linear-gradient($light-green, $dark-green);
   border-color: #575700;
   color: #FFF;
   text-shadow: 0 -1px 0 $dark-grey;
 
   &:hover {
     background-color: #808000;
-    background-image: linear-gradient(#996A22, #DAA658);
+    background-image: linear-gradient($dark-green, $light-green);
   }
 }
