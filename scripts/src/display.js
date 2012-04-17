@@ -55,4 +55,9 @@
       addDomListeners(elementName);
     }
   }
+
+  $ps.subscribe('url.change', function (aMsg, aData) {
+    $dqs('#url a').href = aData;
+  });
+
 })();

@@ -141,6 +141,10 @@ button.control {
   
   &.focused {
     right: $gutter;
+    
+    a {
+      display: none;
+    }
   }
   
   input {
@@ -154,6 +158,20 @@ button.control {
   
   input:focus {
     color: $darker-grey;
+  }
+  
+  a {
+    background: #FFF;
+    border-radius: $gutter / 2;
+    color: $dark-grey;
+    height:  $control-height;
+    line-height:  $control-height;
+    position: absolute;
+    right: 0;
+    text-align: center;
+    text-decoration: none;
+    top: 0;
+    width: $control-height;
   }
 }
 
