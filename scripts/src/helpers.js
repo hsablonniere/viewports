@@ -82,11 +82,24 @@
   };
 
   /**
-   * If the value is in the array, return the array
+   * Helper to sort numeric values
+   */
+  Array.prototype.sortNumeric = (function () {
+    var sortNumeric = function (a, b) {
+      return a - b;
+    };
+
+    return function () {
+      this.sort(sortNumeric);
+    };
+  })();
+
+  /**
+   * If the value is in the array and aIncludeValue equals true, return the value
    * If not return the closest value after the one provided
    */
-  Array.prototype.closestAfter = function (aValue) {
-    if (this.indexOf(aValue) !== -1) {
+  Array.prototype.closestAfter = function (aValue, aIncludeValue) {
+    if (aIncludeValue === true && this.indexOf(aValue) !== -1) {
       return aValue;
     }
 
@@ -104,11 +117,11 @@
   };
 
   /**
-   * If the value is in the array, return the array
-   * If not return the closest value beofre the one provided
+   * If the value is in the array and aIncludeValue equals true, return the value
+   * If not return the closest value before the one provided
    */
-  Array.prototype.closestBefore = function (aValue) {
-    if (this.indexOf(aValue) !== -1) {
+  Array.prototype.closestBefore = function (aValue, aIncludeValue) {
+    if (aIncludeValue === true && this.indexOf(aValue) !== -1) {
       return aValue;
     }
 
@@ -122,6 +135,17 @@
       return this.slice(0, middle + 1).closestBefore(aValue);
     } else {
       return this.slice(middle, this.length).closestBefore(aValue);
+    }
+  };
+
+  /**
+   * Complete a string to reach a specific length with  another string
+   */
+  String.prototype.completeBefore = function (aCompleteString, aLength) {
+    if (this.length >= aLength) {
+      return this;
+    } else {
+      return (aCompleteString + this).completeBefore(aCompleteString, aLength);
     }
   };
 

@@ -11,7 +11,6 @@
       $ps = $win.PubSub,
       $dqs = $win.dqs,
       $mem = $win.$viewports.memory,
-      $list = $win.$viewports.list,
       cursors,
       cursorName,
       handleTitle = null,
@@ -109,8 +108,8 @@
       val = $mem[handleTitle].converter(val);
 
       if (aEvent.ctrlKey) {
-        before = $list.sizes.closestBefore(val);
-        after = $list.sizes.closestAfter(val);
+        before = $mem.list.sizes.closestBefore(val, true);
+        after = $mem.list.sizes.closestAfter(val, true);
         if (after - val > val - before) {
           $mem[handleTitle].value = before;
         } else {

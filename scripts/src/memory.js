@@ -8,6 +8,7 @@
   'use strict';
 
   var $win = window,
+      $ps = $win.PubSub,
       $vp = $win.$viewports,
       $protos = $vp.protos,
       mem;
@@ -89,6 +90,90 @@
 
         mem.height.value = width;
         mem.width.value = height;
+      }
+    },
+
+    list: {
+      name: 'list',
+      items: [],
+      indexesByMin: [],
+      indexesByMax: [],
+      indexedItems: {},
+      sizes: [],
+
+      add: function (aViewport) {
+        var min = aViewport.size.min,
+            max = aViewport.size.max,
+            indexByMin = this.getIndex(min, max),
+            indexByMax = this.getIndex(max, min);
+
+        this.items.pushOnce(aViewport);
+
+        this.indexesByMin.pushOnce(indexByMin);
+        this.indexesByMin.sort();
+        this.indexedItems[indexByMin] = aViewport;
+
+        this.indexesByMax.pushOnce(indexByMax);
+        this.indexesByMax.sort();
+        this.indexedItems[indexByMax] = aViewport;
+
+        this.sizes.pushOnce(min);
+        this.sizes.pushOnce(max);
+        this.sizes.sortNumeric();
+      },
+
+      getIndex: function (aSizeA, aSizeB) {
+        return String(aSizeA).completeBefore(' ', 4) + String(aSizeB).completeBefore(' ', 4);
+      },
+
+      set selectedItem(aViewport) {
+        if (mem.orientation.value === 'portrait') {
+          mem.height.value = aViewport.size.max;
+          mem.width.value = aViewport.size.min;
+        } else {
+          mem.height.value = aViewport.size.min;
+          mem.width.value = aViewport.size.max;
+        }
+      },
+
+      get selectedItem() {
+        return this.indexedItems[this.getIndex(mem.height.value, mem.width.value)];
+      },
+
+      get indexesByHeight() {
+        if (mem.orientation.value === 'portrait') {
+          return this.indexesByMax;
+        } else {
+          return this.indexesByMin;
+        }
+      },
+
+      get indexesByWidth() {
+        if (mem.orientation.value === 'portrait') {
+          return this.indexesByMin;
+        } else {
+          return this.indexesByMax;
+        }
+      },
+
+      closestBefore: function (aIndexes, aSize, bSize) {
+        var currentIdx = this.getIndex(aSize, bSize),
+            newIdx = aIndexes.closestBefore(currentIdx);
+
+        return this.indexedItems[newIdx];
+      },
+
+      closestAfter: function (aIndexes, aSize, bSize) {
+        var currentIdx = this.getIndex(aSize, bSize),
+            newIdx = aIndexes.closestAfter(currentIdx);
+
+        return this.indexedItems[newIdx];
+      },
+
+      setFavourite: function (aSizeA, aSizeB, aFavourite) {
+        var favouriteItem = this.indexedItems[this.getIndex(aSizeA, aSizeB)];
+        favouriteItem.favourite = aFavourite;
+        $ps.publish('favourite.change', favouriteItem);
       }
     }
   };

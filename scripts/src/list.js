@@ -13,27 +13,30 @@
       $dqs = $win.dqs,
       $vp = $win.$viewports,
       $mem = $vp.memory,
-      list,
-      selectViewport,
-      i;
-
-  list = $vp.list = {
-    sizes: []
-  };
+      selectViewport;
 
   $ps.subscribe('list.load', function (aMsg, aData) {
-    list.items = aData.items;
+    var i;
+
+    for (i = 0; i < aData.items.length; i += 1) {
+      $mem.list.add(aData.items[i]);
+    }
+
     if (!$ich.listTemplate) {
       $ich.refresh();
     }
-    $dqs('#list').innerHTML = $ich.listTemplate($vp);
-    list.sizes = [];
-    for (i = 0; i < list.items.length; i++) {
-      list.sizes.pushOnce(+list.items[i].size.min);
-      list.sizes.pushOnce(+list.items[i].size.max);
-    }
-    list.sizes.sort(function (a, b) {
-      return a - b;
+
+    $mem.list.items.sort(function (a, b) {
+      if (a.size.min === b.size.min) {
+        return a.size.max - b.size.max;
+      } else {
+        return a.size.min - b.size.min;
+      }
+    });
+
+    $dqs('#list').innerHTML = $ich.listTemplate({
+      items: $mem.list.items,
+      getRootUrl: $vp.getRootUrl
     });
   });
 
@@ -50,8 +53,7 @@
       if (orientation === 'portrait') {
         $mem.height.value = max;
         $mem.width.value = min;
-      }
-      if (orientation === 'landscape') {
+      } else {
         $mem.height.value = min;
         $mem.width.value = max;
       }

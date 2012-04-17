@@ -9,7 +9,6 @@
 
   var $win = window,
       $mem = $win.$viewports.memory,
-      $list = $win.$viewports.list,
       listeners;
 
   listeners = {
@@ -30,38 +29,50 @@
       $mem.height.alter(1);
     },
     'up+ctrl': function () {
-      $mem.height.value = $list.sizes.closestAfter($mem.height.value);
+      $mem.height.value = $mem.list.sizes.closestAfter($mem.height.value);
     },
     'up+shift': function () {
       $mem.height.alter(10);
+    },
+    'up+shift+ctrl': function () {
+      $mem.list.selectedItem = $mem.list.closestAfter($mem.list.indexesByHeight, $mem.height.value, $mem.width.value);
     },
     'down': function () {
       $mem.height.alter(-1);
     },
     'down+ctrl': function () {
-      $mem.height.value = $list.sizes.closestBefore($mem.height.value);
+      $mem.height.value = $mem.list.sizes.closestBefore($mem.height.value);
     },
     'down+shift': function () {
       $mem.height.alter(-10);
+    },
+    'down+shift+ctrl': function () {
+      $mem.list.selectedItem = $mem.list.closestBefore($mem.list.indexesByHeight, $mem.height.value, $mem.width.value);
     },
 
     'right': function () {
       $mem.width.alter(1);
     },
     'right+ctrl': function () {
-      $mem.width.value = $list.sizes.closestAfter($mem.width.value);
+      $mem.width.value = $mem.list.sizes.closestAfter($mem.width.value);
     },
     'right+shift': function () {
       $mem.width.alter(10);
+    },
+    'right+shift+ctrl': function () {
+      $mem.list.selectedItem = $mem.list.closestAfter($mem.list.indexesByWidth, $mem.width.value, $mem.height.value);
     },
     'left': function () {
       $mem.width.alter(-1);
     },
     'left+ctrl': function () {
-      $mem.width.value = $list.sizes.closestBefore($mem.width.value);
+      $mem.width.value = $mem.list.sizes.closestBefore($mem.width.value);
     },
     'left+shift': function () {
       $mem.width.alter(-10);
+    },
+    'left+shift+ctrl': function () {
+      $mem.list.selectedItem = $mem.list.closestBefore($mem.list.indexesByWidth, $mem.width.value, $mem.height.value);
     },
 
     'O': function () {
