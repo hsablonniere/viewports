@@ -34,7 +34,7 @@
 
   <div class="control" id="url">
     <input type="text" title="url" spellcheck="false" value="">
-    <a href="" target="_blank" title="open in new window">➤</a>
+    <a href="" target="_blank" title="open in new window">▶</a>
   </div>
 
   <button class="control" id="autoscale-switch"
@@ -89,19 +89,19 @@
 
     <div class="name">{{name}}</div>
     <div class="size">
-      <span class="min">{{size.min}}</span> ⨉ <span class="max">{{size.max}}</span>
+      <span class="min">{{size.min}}</span> ✕ <span class="max">{{size.max}}</span>
     </div>
     <div class="details">{{details}}</div>
     <div class="actions">
       <a href="javascript:(function(){location.href='{{getRootUrl}}#u='+encodeURIComponent(location.href)+'&h={{size.min}}&w={{size.max}}'})()"
-         class="button orientation" title="bookmarklet : load current site into Viewports with {{size.max}}⨉{{size.min}}"
+         class="button orientation" title="bookmarklet : load current site into Viewports with {{size.max}}x{{size.min}}"
          data-bookmarklet="only" data-size-min="{{size.min}}" data-size-max="{{size.max}}" data-orientation="landscape">
-        <span class="bookmarkletText">VP {{size.max}}⨉{{size.min}}</span>
+        <span class="bookmarkletText">VP {{size.max}}x{{size.min}}</span>
       </a>
       <a href="javascript:(function(){location.href='{{getRootUrl}}#u='+encodeURIComponent(location.href)+'&h={{size.max}}&w={{size.min}}'})()"
-         class="button orientation" title="bookmarklet : load current site into Viewports with {{size.min}}⨉{{size.max}}"
+         class="button orientation" title="bookmarklet : load current site into Viewports with {{size.min}}x{{size.max}}"
          data-bookmarklet="only" data-size-min="{{size.min}}" data-size-max="{{size.max}}" data-orientation="portrait">
-        <span class="bookmarkletText">VP {{size.min}}⨉{{size.max}}</span>
+        <span class="bookmarkletText">VP {{size.min}}x{{size.max}}</span>
       </a>
     </div>
   </div>

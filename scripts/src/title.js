@@ -22,7 +22,7 @@
           height = $mem.height.value,
           url = $mem.url.pattern.exec($mem.url.value)[2];
 
-      $doc.title = width + '\u2a09' + height + ' - ' + url + ' - Viewports';
+      $doc.title = width + 'x' + height + ' - ' + url + ' - Viewports';
     }
   };
 
