@@ -117,8 +117,8 @@
         this.indexesByMax.sort();
         this.indexedItems[indexByMax] = aViewport;
 
-        this.sizes.pushOnce(min);
-        this.sizes.pushOnce(max);
+        this.sizes.pushOnce(Number(min));
+        this.sizes.pushOnce(Number(max));
         this.sizes.sortNumeric();
       },
 
