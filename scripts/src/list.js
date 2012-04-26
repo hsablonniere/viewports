@@ -38,6 +38,8 @@
       items: $mem.list.items,
       getRootUrl: $vp.getRootUrl
     });
+
+    $ps.publish('list.loaded', $mem.list.indexedItems);
   });
 
   $dqs('#list').addEventListener('click', function (aEvent) {

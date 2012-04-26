@@ -85,7 +85,7 @@
 <script id="listTemplate" type="text/html">
   {{#items}}
   <div class="viewport" data-favourite="{{favourite}}" data-size-min="{{size.min}}" data-size-max="{{size.max}}">
-    <button class="favourite">★</button>
+    <button class="favourite" data-size-min="{{size.min}}" data-size-max="{{size.max}}">★</button>
 
     <div class="name">{{name}}</div>
     <div class="size">

@@ -170,9 +170,9 @@
         return this.indexedItems[newIdx];
       },
 
-      setFavourite: function (aSizeA, aSizeB, aFavourite) {
+      toggleFavourite: function (aSizeA, aSizeB, aFavourite) {
         var favouriteItem = this.indexedItems[this.getIndex(aSizeA, aSizeB)];
-        favouriteItem.favourite = aFavourite;
+        favouriteItem.favourite = aFavourite || String(Number(!Boolean(Number(favouriteItem.favourite))));
         $ps.publish('favourite.change', favouriteItem);
       }
     }

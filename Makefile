@@ -27,7 +27,8 @@ INDEX_JS_FILES = ${SCRIPTS_DIR}/${LIB_DIR}/PubSubJS.min.js\
 	${SCRIPTS_DIR}/${SRC_DIR}/keyboard.js\
 	${SCRIPTS_DIR}/${SRC_DIR}/display.js\
 	${SCRIPTS_DIR}/${SRC_DIR}/bookmarklets.js\
-	${SCRIPTS_DIR}/${SRC_DIR}/resize.js
+	${SCRIPTS_DIR}/${SRC_DIR}/resize.js\
+	${SCRIPTS_DIR}/${SRC_DIR}/favourites.js
 
 dev:
 	@echo
