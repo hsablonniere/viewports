@@ -207,4 +207,15 @@
     };
   }
 
+  /**
+   * refresh an iframe
+   */
+  if (!$win.HTMLIFrameElement.prototype.refresh) {
+    $win.HTMLIFrameElement.prototype.refresh = function () {
+      var src = this.src;
+      this.src = '';
+      this.src = src;
+    };
+  }
+
 })();

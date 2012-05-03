@@ -16,6 +16,10 @@
     $dqs('#viewport').src = aData;
   });
 
+  $ps.subscribe('url.refresh', function (aMsg, aData) {
+    $dqs('#viewport').refresh();
+  });
+
   $ps.subscribe('scale.change', function (aMsg, aData) {
     aData = (aData / 100).toFixed(3);
     $dqs('#viewport-wrapper').style.setProperty($pf.prefixProperty('transform'), 'scale(' + aData + ')', '');

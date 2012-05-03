@@ -8,6 +8,7 @@
   'use strict';
 
   var $win = window,
+      $ps = $win.PubSub,
       $mem = $win.$viewports.memory,
       listeners;
 
@@ -98,6 +99,10 @@
     'F': function () {
       $mem.hold.value = '0';
       $mem.filter.toggle();
+    },
+
+    'R': function () {
+      $ps.publish('url.refresh');
     }
   };
 

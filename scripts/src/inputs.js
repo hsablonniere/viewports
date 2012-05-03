@@ -71,5 +71,9 @@
       addDomListeners(inputName, inputs[inputName]);
     }
   }
+
+  $dqs('#url .refresh').addEventListener('click', function (aEvent) {
+    $ps.publish('url.refresh');
+  }, false);
   
 })();

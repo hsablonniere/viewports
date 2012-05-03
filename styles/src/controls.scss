@@ -142,7 +142,8 @@ button.control {
   &.focused {
     right: $gutter;
     
-    a {
+    .refresh,
+    .open-in-new-window {
       display: none;
     }
   }
@@ -152,26 +153,41 @@ button.control {
     border-radius: 0 0 $gutter / 2 $gutter / 2;
     color: $dark-grey;
     height: 100%;
-    padding: 0 $gutter / 2;
+    padding: 0 $control-height * 2 0 $gutter / 2;
     width: 100%;
   }
   
   input:focus {
     color: $darker-grey;
   }
-  
-  a {
+
+  .refresh,
+  .open-in-new-window {
     background: #FFF;
     border-radius: $gutter / 2;
     color: $dark-grey;
     height:  $control-height;
     line-height:  $control-height;
     position: absolute;
-    right: 0;
     text-align: center;
     text-decoration: none;
     top: 0;
     width: $control-height;
+  }
+
+  .refresh {
+    border: none;
+    box-shadow: none;
+    cursor: pointer;
+    font-size: $font-size * 1.5;
+    font-weight: normal;
+    padding: 0;
+    right: $control-height;
+    text-shadow: none;
+  }
+
+  .open-in-new-window {
+    right: 0;
   }
 }
 
@@ -196,3 +212,4 @@ button.control {
     top: 0 - $control-height - $gutter;
   }
 }
+

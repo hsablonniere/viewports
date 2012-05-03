@@ -57,7 +57,7 @@
   }
 
   $ps.subscribe('url.change', function (aMsg, aData) {
-    $dqs('#url a').href = aData;
+    $dqs('#url .open-in-new-window').href = aData;
   });
 
 })();
