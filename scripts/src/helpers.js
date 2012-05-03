@@ -190,6 +190,8 @@
    */
   if (!$win.Element.prototype.scrollIntoViewIfNeeded) {
     $win.Element.prototype.scrollIntoViewIfNeeded = function (centerIfNeeded) {
+      centerIfNeeded = arguments.length === 0 ? true : !!centerIfNeeded;
+
       var parent = this.parentNode,
           aboveScrollView = this.offsetTop - parent.offsetTop < parent.scrollTop,
           belowScrollView = (this.offsetTop - parent.offsetTop + this.clientHeight) > (parent.scrollTop + parent.clientHeight),
