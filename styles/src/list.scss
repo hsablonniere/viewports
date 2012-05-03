@@ -25,15 +25,15 @@
   top: $font-size * 2 + $gutter;
   
   &::-webkit-scrollbar {
-    width: $gutter / 2;
-}
+    width: $gutter;
+  }
 
   &::-webkit-scrollbar-track {
-    border-radius: $gutter;
+    border-radius: $gutter / 3;
   }
 
   &::-webkit-scrollbar-thumb {
-    border-radius: $gutter;
+    border-radius: $gutter / 3;
     background: $light-grey;
   }
 }
