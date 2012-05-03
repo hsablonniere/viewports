@@ -39,7 +39,7 @@
     for (itemIdx in aData) {
       if (aData.hasOwnProperty(itemIdx)) {
         favourite = localStorage.getItem('viewports.' + itemIdx + '.favourite');
-        if (favourite != null) {
+        if (favourite !== null) {
           $mem.list.toggleFavourite(aData[itemIdx].size.min, aData[itemIdx].size.max, favourite);
         }
       }
