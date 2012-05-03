@@ -184,4 +184,25 @@
     }
   })();
 
+  /**
+   * scrollIntoViewIfNeeded 4 everyone!!!
+   * https://gist.github.com/2581101
+   */
+  if (!$win.Element.prototype.scrollIntoViewIfNeeded) {
+    $win.Element.prototype.scrollIntoViewIfNeeded = function (centerIfNeeded) {
+      var parent = this.parentNode,
+          aboveScrollView = this.offsetTop - parent.offsetTop < parent.scrollTop,
+          belowScrollView = (this.offsetTop - parent.offsetTop + this.clientHeight) > (parent.scrollTop + parent.clientHeight),
+          alignWithTop = aboveScrollView && !belowScrollView;
+
+      if (aboveScrollView || belowScrollView) {
+        if (centerIfNeeded) {
+          parent.scrollTop = this.offsetTop - parent.offsetTop - parent.clientHeight / 2 + this.clientHeight / 2;
+        } else {
+          this.scrollIntoView(alignWithTop);
+        }
+      }
+    };
+  }
+
 })();

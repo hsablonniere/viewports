@@ -75,6 +75,7 @@
 
     newSelection = $dqs('.viewport[data-size-min="' + min + '"][data-size-max="' + max + '"]');
     if (newSelection !== null) {
+      newSelection.scrollIntoViewIfNeeded();
       newSelection.dataset.selected = '1';
     }
   };
