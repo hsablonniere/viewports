@@ -70,6 +70,16 @@ prod:
 		uglifyjs -nc $$file >> ${INDEX_JS} ; \
 	done
 
+jshint:
+	@echo
+	@echo ---------------------------------
+	@echo Applying jshint on each JS files
+	@echo ---------------------------------
+	@echo
+	@for file in ${INDEX_JS_FILES} ; do \
+		jshint $$file ; \
+	done
+
 clean:
 	@echo
 	@echo ---------------------------------
