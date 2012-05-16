@@ -212,9 +212,15 @@
    */
   if (!$win.HTMLIFrameElement.prototype.refresh) {
     $win.HTMLIFrameElement.prototype.refresh = function () {
-      var src = this.src;
+      var that = this,
+          src = this.src,
+          onload = function () {
+            that.src = src;
+            that.onload = null;
+          };
+
+      this.onload = onload;
       this.src = '';
-      this.src = src;
     };
   }
 
